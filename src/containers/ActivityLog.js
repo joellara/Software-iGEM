@@ -79,6 +79,7 @@ class CellCount extends Component {
 
     return (
     <div>
+      <p>Filter your logs: </p>
       <Row style={{margin:'0'}}>
         {years}
       </Row>

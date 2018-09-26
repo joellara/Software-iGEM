@@ -5,6 +5,7 @@ import { Route, NavLink } from "react-router-dom";
 import App from "./App";
 import CellCount from "./CellCount";
 import ActivityLog from "./ActivityLog"
+import firebase from 'firebase';
 
 const Root = ({ store }) => (
   <Provider store={store}>
