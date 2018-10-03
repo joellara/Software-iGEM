@@ -7,31 +7,38 @@ import Nav from "react-bootstrap/lib/Nav"
 import App from "./App"
 import CellCount from "./CellCount"
 import ActivityLog from "./ActivityLog"
-import firebase from "firebase"
+import BiobrickBuilder from "./BiobrickBuilder"
+import "../css/body.css"
 
 const Root = ({ store }) => (
     <Provider store={store}>
         <React.Fragment>
-            <Navbar bg="dark" expand="lg" variant="dark">
-                <Navbar.Brand href="/">iGEM</Navbar.Brand>
+            <Navbar fixed="top" bg="dark" expand="lg" variant="dark">
+                <Navbar.Brand as={NavLink} exact to="/">
+                    iGEM
+                </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="mr-auto">
-                        <NavLink exact to="/" className="nav-link">
+                        <Nav.Link as={NavLink} to="/">
                             Home
-                        </NavLink>
-                        <NavLink to="/cellcount" className="nav-link">
+                        </Nav.Link>
+                        <Nav.Link as={NavLink} to="/cellcount">
                             Cell Count
-                        </NavLink>
-                        <NavLink to="/activitylog" className="nav-link">
+                        </Nav.Link>
+                        <Nav.Link as={NavLink} to="/activitylog">
                             Activity
-                        </NavLink>
+                        </Nav.Link>
+                        <Nav.Link as={NavLink} to="/bbbuilder">
+                            Biobrick Builder
+                        </Nav.Link>
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>
             <Route exact path="/" component={App} />
             <Route path="/cellcount" component={CellCount} />
             <Route path="/activitylog" component={ActivityLog} />
+            <Route path="/bbbuilder" component={BiobrickBuilder} />
         </React.Fragment>
     </Provider>
 )
@@ -40,4 +47,3 @@ Root.propTypes = {
     store: PropTypes.object.isRequired
 }
 export default Root
-
