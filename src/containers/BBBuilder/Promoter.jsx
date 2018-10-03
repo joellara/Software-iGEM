@@ -1,9 +1,11 @@
 import React, { Component } from "react"
 import { connect } from "react-redux"
 import { partsActions } from "../../actions"
+import { promotersRef } from "../../config/firebase"
 import Container from "react-bootstrap/lib/Container"
 import Row from "react-bootstrap/lib/Row"
 import Col from "react-bootstrap/lib/Col"
+import Button from "react-bootstrap/lib/Button"
 import BootstrapTable from "react-bootstrap-table-next"
 import paginationFactory from "react-bootstrap-table2-paginator"
 import filterFactory, { textFilter } from "react-bootstrap-table2-filter"
@@ -12,8 +14,12 @@ import "../../css/table.css"
 class Promoter extends Component {
     constructor(props) {
         super(props)
-        const { dispatch } = this.props
-        dispatch(partsActions.fetchPromoters())
+        promotersRef.on("value", snapshot => {
+            this.setState({
+                ...this.state,
+                payload: snapshot.val()
+            })
+        })
         this.state = {
             columns: [
                 {
@@ -22,12 +28,14 @@ class Promoter extends Component {
                     filter: textFilter(),
                     style: () => ({
                         width: "30%"
-                    })
+                    }),
+                    sort: true
                 },
                 {
                     dataField: "desc",
                     text: "Product Description",
-                    filter: textFilter()
+                    filter: textFilter(),
+                    sort: true
                 }
             ],
             selectRow: {
@@ -39,8 +47,7 @@ class Promoter extends Component {
         }
     }
     render() {
-        const { columns, selectRow } = this.state
-        const { payload } = this.props
+        const { columns, selectRow, payload } = this.state
         return (
             <Container>
                 <Row>
@@ -78,11 +85,7 @@ class Promoter extends Component {
     }
 }
 
-const mapStateToProp = ({
-    parts: {
-        promoters: { payload }
-    }
-}) => {
-    return { payload }
-}
-export default connect(mapStateToProp)(Promoter)
+// const mapStateToProp = ({}) => {
+//     return {}
+// }
+export default connect()(Promoter)

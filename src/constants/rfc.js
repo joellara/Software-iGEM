@@ -1,0 +1,6 @@
+export const RFC_10 = "RFC_10"
+export const RFC_12 = "RFC_12"
+export const RFC_21 = "RFC_21"
+export const RFC_23 = "RFC_23"
+export const RFC_25 = "RFC_25"
+export const RFC_100 = "RFC_100"

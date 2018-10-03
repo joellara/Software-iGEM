@@ -1,6 +1,5 @@
 import { combineReducers } from "redux"
-import { promoters } from "./partsReducer"
-const partsReducer = combineReducers({ promoters })
-const rootReducer = combineReducers({ parts: partsReducer })
+import { builder } from "./builder"
+const rootReducer = combineReducers({ builder })
 
 export default rootReducer
