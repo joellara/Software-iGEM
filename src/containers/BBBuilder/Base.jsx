@@ -1,26 +1,25 @@
 import React, { Component } from "react"
 import { connect } from "react-redux"
+import { Redirect } from "react-router-dom"
+//Components
+import RadioSelectionGroup from "../../components/RadioSelectionGroup"
+//Redux
+import { RFCs, Chassis } from "../../constants"
+import { builderActions } from "../../actions"
+//Style
 import Container from "react-bootstrap/lib/Container"
 import Row from "react-bootstrap/lib/Row"
 import Col from "react-bootstrap/lib/Col"
 import Card from "react-bootstrap/lib/Card"
 import CardDeck from "react-bootstrap/lib/CardDeck"
 import Button from "react-bootstrap/lib/Button"
-import { Redirect } from "react-router-dom"
-import RadioSelectionGroup from "../../components/RadioSelectionGroup"
-//Redux
-import { RFCs, Chassis } from "../../constants"
-import { builderActions } from "../../actions"
 
-//Style
 import "../../css/bbbuilder.css"
 
 export class Base extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            rfc: "",
-            chassis: "",
             shouldContinue: false
         }
         this.onClick = this.onClick.bind(this)
@@ -28,16 +27,10 @@ export class Base extends Component {
     handleClickRFC = id => {
         const { dispatch } = this.props
         dispatch(builderActions.selectRFC(id))
-        this.setState({
-            rfc: id
-        })
     }
     handleClickChassis = id => {
         const { dispatch } = this.props
         dispatch(builderActions.selectChassis(id))
-        this.setState({
-            chassis: id
-        })
     }
     onClick() {
         this.setState({
@@ -45,8 +38,11 @@ export class Base extends Component {
         })
     }
     render() {
-        const { valid } = this.props
-        const { shouldContinue, rfc, chassis } = this.state
+        const {
+            valid,
+            builder: { rfc, chassis }
+        } = this.props
+        const { shouldContinue } = this.state
         if (shouldContinue) {
             return <Redirect to={`bbbuilder/promoter`} />
         }
