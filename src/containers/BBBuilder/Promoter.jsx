@@ -22,7 +22,8 @@ import "../../css/table.css"
 const selectOptions = {
     Inducible: "Inducible",
     Constitutive: "Constitutive",
-    Repressible: "Repressible"
+    Repressible: "Repressible",
+    Multiple: "Multiple"
 }
 const IN_STOCK = "In stock"
 const NOT_IN_STOCK = "Not in stock"
@@ -124,7 +125,7 @@ class Promoter extends Component {
                 return (
                     val["status"] === dataRfc[e] &&
                     val["standards"].indexOf(rfc) > -1 &&
-                    val["chasis"] === chassis
+                    val["chassis"] === chassis
                 )
             }),
             status: dataRfc[e]
@@ -140,7 +141,7 @@ class Promoter extends Component {
                 filteredPayload: snapshot.val().filter(val => {
                     return (
                         val["standards"].indexOf(rfc) > -1 &&
-                        val["chasis"] === chassis
+                        val["chassis"] === chassis
                     )
                 })
             })
