@@ -12,12 +12,6 @@ import "../../css/table.css"
 class Promoter extends Component {
     constructor(props) {
         super(props)
-        promotersRef.on("value", snapshot => {
-            this.setState({
-                ...this.state,
-                payload: snapshot.val()
-            })
-        })
         this.state = {
             columns: [
                 {
@@ -43,6 +37,14 @@ class Promoter extends Component {
                 bgColor: "#7dc9ff"
             }
         }
+    }
+    componentDidMount() {
+        promotersRef.on("value", snapshot => {
+            this.setState({
+                ...this.state,
+                payload: snapshot.val()
+            })
+        })
     }
     render() {
         const { columns, selectRow, payload } = this.state

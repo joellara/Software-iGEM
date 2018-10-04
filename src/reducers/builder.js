@@ -3,7 +3,7 @@ const initialState = {
     rfc: "",
     promoter: "",
     terminator: "",
-    chasis: "",
+    chassis: "",
     rbs: ""
 }
 
@@ -14,7 +14,11 @@ export const builder = (state = initialState, action) => {
                 ...state,
                 rfc: action.rfc
             }
-
+        case builderConstants.SELECT_CHASSIS:
+            return {
+                ...state,
+                chassis: action.chassis
+            }
         default:
             return state
     }

@@ -1,7 +1,7 @@
 import React from "react"
 import PropTypes from "prop-types"
 import { Provider } from "react-redux"
-import { Route, NavLink } from "react-router-dom"
+import { Route, NavLink, Switch } from "react-router-dom"
 import Navbar from "react-bootstrap/lib/Navbar"
 import Nav from "react-bootstrap/lib/Nav"
 import App from "./App"
@@ -35,10 +35,12 @@ const Root = ({ store }) => (
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>
-            <Route exact path="/" component={App} />
-            <Route path="/cellcount" component={CellCount} />
-            <Route path="/activitylog" component={ActivityLog} />
-            <Route path="/bbbuilder" component={BiobrickBuilder} />
+            <Switch>
+                <Route exact path="/" component={App} />
+                <Route path="/cellcount" component={CellCount} />
+                <Route path="/activitylog" component={ActivityLog} />
+                <Route path="/bbbuilder" component={BiobrickBuilder} />
+            </Switch>
         </React.Fragment>
     </Provider>
 )
