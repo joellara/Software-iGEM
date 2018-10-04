@@ -98,13 +98,21 @@ const paginationOptions = {
 const rowStyle = (row, rowIndex) => {
     const style = {}
     if (row["status"] === IN_STOCK) {
-        style.backgroundColor = "#9eca8d"
+        style.border = "2px solid #9eca8d"
     } else if (row["status"] === NOT_IN_STOCK) {
-        style.backgroundColor = "#f38484"
+        style.border = "2px solid #f38484"
     } else if (row["status"] === COMPLICATED) {
-        style.backgroundColor = "#ffffb4"
+        style.border = "2px solid rgb(255, 217, 30)"
     }
     return style
+}
+const expandRow = {
+    renderer: row => (
+        <div>
+            <p>Sample status: {`${row["status"]}`}</p>
+            <p>Length: {`${row["length"]}`}</p>
+        </div>
+    )
 }
 class Promoter extends Component {
     constructor(props) {
@@ -202,6 +210,7 @@ class Promoter extends Component {
                                 filter={filterFactory()}
                                 bootstrap4={true}
                                 rowStyle={rowStyle}
+                                expandRow={expandRow}
                             />
                         )}
                     </Col>
