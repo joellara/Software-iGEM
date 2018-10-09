@@ -2,7 +2,7 @@ import React from "react"
 import FormGroup from "react-bootstrap/lib/FormGroup"
 import FormCheck from "react-bootstrap/lib/FormCheck"
 
-const list = ({ listData, stateData, _function, name }) => {
+const list = ({ listData, stateData, _function, _name }) => {
     return listData.map(data => {
         return (
             <FormGroup
@@ -12,7 +12,7 @@ const list = ({ listData, stateData, _function, name }) => {
                 <FormCheck
                     onClick={() => _function(`${data}`)}
                     type="radio"
-                    name={name}
+                    name={_name}
                     id={`${data.replace(/\s/g, "")}`}
                     label={data}
                 />

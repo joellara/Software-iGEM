@@ -19,9 +19,6 @@ import "../../css/bbbuilder.css"
 export class Base extends Component {
     constructor(props) {
         super(props)
-        this.state = {
-            shouldContinue: false
-        }
         this.onClick = this.onClick.bind(this)
     }
     handleClickRFC = id => {
@@ -33,19 +30,25 @@ export class Base extends Component {
         dispatch(builderActions.selectChassis(id))
     }
     onClick() {
-        this.setState({
-            shouldContinue: true
-        })
+        const { history } = this.props
+        history.push("/bbbuilder/promoter")
+    }
+    componentDidMount() {
+        const {
+            builder: { rfc, chassis }
+        } = this.props
+        if (rfc) {
+            document.getElementById(rfc.replace(/\s/g, "")).checked = true
+        }
+        if (chassis) {
+            document.getElementById(chassis.replace(/\s/g, "")).checked = true
+        }
     }
     render() {
         const {
             valid,
             builder: { rfc, chassis }
         } = this.props
-        const { shouldContinue } = this.state
-        if (shouldContinue) {
-            return <Redirect to={`bbbuilder/promoter`} />
-        }
         return (
             <Container id="initialSelection">
                 <Row>
@@ -87,7 +90,7 @@ export class Base extends Component {
                         <Button
                             onClick={this.onClick}
                             disabled={!valid}
-                            to="/activitylog">
+                            variant="success">
                             Continuar
                         </Button>
                     </Col>

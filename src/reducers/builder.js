@@ -19,6 +19,11 @@ export const builder = (state = initialState, action) => {
                 ...state,
                 chassis: action.chassis
             }
+        case builderConstants.SELECT_PROMOTER:
+            return {
+                ...state,
+                promoter: action.promoter
+            }
         default:
             return state
     }
