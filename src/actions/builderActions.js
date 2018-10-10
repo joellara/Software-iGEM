@@ -12,8 +12,13 @@ const selectPromoter = promoter => ({
     type: builderConstants.SELECT_PROMOTER,
     promoter: promoter
 })
+const selectRBS = rbs => ({
+    type: builderConstants.SELECT_RBS,
+    rbs: rbs
+})
 export const builderActions = {
     selectRFC,
     selectChassis,
-    selectPromoter
+    selectPromoter,
+    selectRBS
 }

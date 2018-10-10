@@ -1,7 +1,7 @@
 import React, { Component } from "react"
 import { connect } from "react-redux"
 import { Redirect } from "react-router-dom"
-import { promotersRef } from "../../config/firebase"
+import { rbsRef } from "../../config/firebase"
 
 //Style
 
@@ -27,15 +27,20 @@ import InputGroup from "react-bootstrap/lib/InputGroup"
 import FormControl from "react-bootstrap/lib/FormControl"
 
 const selectOptions = {
-    Inducible: "Inducible",
-    Constitutive: "Constitutive",
-    Repressible: "Repressible",
-    Multiple: "Multiple"
+    ConstitutiveAndersonLibrary: "Constitutive Anderson",
+    ConstitutiveCommunityCollection: "Constitutive Community",
+    RegulatedProkaryotic: "Regulated Prokaryotic",
+    ConstitutiveCustom: "Constitutive Custom",
+    Yeast: "Yeast"
 }
+
 const IN_STOCK = "In stock"
 const NOT_IN_STOCK = "Not in stock"
 const COMPLICATED = "It's complicated"
 const ALL = "All"
+const PROKARYOTE = "Prokaryotic"
+const EUKARYOTIC = "Eukaryotic"
+
 const columns = [
     {
         dataField: "name",
@@ -43,11 +48,11 @@ const columns = [
         filter: textFilter(),
         sort: true,
         style: (cell, row, rowIndex, colIndex) => ({
-            width: "30%"
+            width: "20%"
         })
     },
     {
-        dataField: "desc",
+        dataField: "description",
         text: "Product Description",
         filter: textFilter(),
         sort: true,
@@ -56,14 +61,22 @@ const columns = [
         })
     },
     {
-        dataField: "regulation",
-        text: "Regulation",
+        dataField: "type",
+        text: "Category",
         formatter: cell => selectOptions[cell],
         filter: selectFilter({
             options: selectOptions
         }),
         style: (cell, row, rowIndex, colIndex) => ({
-            width: "30%"
+            width: "<i class='fa fa-battery-2' aria-hidden='true'></i>0%"
+        })
+    },
+    {
+        dataField: "strength",
+        text: "Strength",
+        sort: true,
+        style: (cell, row, rowIndex, colIndex) => ({
+            width: "20%"
         })
     },
     {
@@ -108,39 +121,71 @@ class Promoter extends Component {
         super(props)
         this.state = {
             status: "",
+            type: "",
             payload: [],
             filteredPayload: [],
-            selectedPromoter: "",
+            selectedRBS: "",
+            typedRBS: "",
             expanded: [],
             fromLibrary: true
         }
-        this.handleClickStatus = this.handleClickStatus.bind(this)
+        this.handleSelectStatus = this.handleSelectStatus.bind(this)
+        this.handleSelectType = this.handleSelectType.bind(this)
         this.handClickBack = this.handClickBack.bind(this)
         this.handleClickContinue = this.handleClickContinue.bind(this)
         this.toggleLibrary = this.toggleLibrary.bind(this)
         this.handleChangeSequence = this.handleChangeSequence.bind(this)
     }
     handleChangeSequence = event => {
-        this.setState({ selectedPromoter: event.target.value })
+        this.setState({ typedRBS: event.target.value })
     }
     handClickBack = () => {
         const { history } = this.props
-        history.push("/bbbuilder")
+        history.push("/bbbuilder/promoter")
     }
     toggleLibrary = () => {
         const { fromLibrary } = this.state
-        this.setState({
-            fromLibrary: !fromLibrary
-        })
+        if (fromLibrary) {
+            this.setState({
+                fromLibrary: !fromLibrary,
+                typed: ""
+            })
+        } else {
+            this.setState({
+                fromLibrary: !fromLibrary,
+                selectedRBS: "",
+                expanded: []
+            })
+        }
     }
     handleClickContinue = () => {
-        const { selectedPromoter } = this.state
+        const { selectedRBS } = this.state
         const { dispatch } = this.props
-        dispatch(builderActions.selectPromoter(selectedPromoter))
+        dispatch(builderActions.selectRBS(selectedRBS))
         const { history } = this.props
-        history.push("/bbbuilder/rbs")
+        history.push("/bbbuilder/codingsequence")
     }
-    handleClickStatus = e => {
+    handleSelectType = e => {
+        const dataStatus = [ALL, PROKARYOTE, EUKARYOTIC]
+
+        let { rfc } = this.props.builder
+        rfc = rfc.replace(/\s/g, "")
+
+        this.setState({
+            filteredPayload: this.state.payload.filter(val => {
+                if (dataStatus[e] !== ALL) {
+                    return (
+                        val["chassis"] === dataStatus[e] &&
+                        val["standards"].indexOf(rfc) > -1
+                    )
+                } else {
+                    return val["standards"].indexOf(rfc) > -1
+                }
+            }),
+            type: dataStatus[e]
+        })
+    }
+    handleSelectStatus = e => {
         const dataStatus = [ALL, IN_STOCK, NOT_IN_STOCK, COMPLICATED]
         let { rfc, chassis } = this.props.builder
         rfc = rfc.replace(/\s/g, "")
@@ -149,14 +194,10 @@ class Promoter extends Component {
                 if (dataStatus[e] !== ALL) {
                     return (
                         val["status"] === dataStatus[e] &&
-                        val["standards"].indexOf(rfc) > -1 &&
-                        val["chassis"] === chassis
+                        val["standards"].indexOf(rfc) > -1
                     )
                 } else {
-                    return (
-                        val["standards"].indexOf(rfc) > -1 &&
-                        val["chassis"] === chassis
-                    )
+                    return val["standards"].indexOf(rfc) > -1
                 }
             }),
             status: dataStatus[e]
@@ -165,12 +206,12 @@ class Promoter extends Component {
     handleOnExpand = (row, isExpand, rowIndex, e) => {
         if (isExpand) {
             this.setState(() => ({
-                selectedPromoter: row.name,
+                selectedRBS: row.name,
                 expanded: [row.name]
             }))
         } else {
             this.setState(() => ({
-                selectedPromoter: "",
+                selectedRBS: "",
                 expanded: []
             }))
         }
@@ -204,15 +245,12 @@ class Promoter extends Component {
             builder: { rfc, chassis }
         } = this.props
         rfc = rfc.replace(/\s/g, "")
-        promotersRef.on("value", snapshot => {
+        rbsRef.on("value", snapshot => {
             this.setState(() => ({
                 ...this.state,
                 payload: snapshot.val(),
                 filteredPayload: snapshot.val().filter(val => {
-                    return (
-                        val["standards"].indexOf(rfc) > -1 &&
-                        val["chassis"] === chassis
-                    )
+                    return val["standards"].indexOf(rfc) > -1
                 })
             }))
         })
@@ -223,23 +261,25 @@ class Promoter extends Component {
             status,
             expanded,
             fromLibrary,
-            selectedPromoter
+            selectedRBS,
+            type,
+            typedRBS
         } = this.state
-        const { rfc, chassis } = this.props.builder
+        const { rfc, chassis, promoter } = this.props.builder
         if (!rfc || !chassis) return <Redirect to="/bbbuilder" />
+        if (!promoter) return <Redirect to="/bbbuilder/promotere" />
         const expandRow = {
             renderer: row => (
                 <div>
                     <p>Sample status: {`${row["status"]}`}</p>
-                    <p>Length: {`${row["length"]}`}</p>
                     <p>Compatible RFC standards: {`${row["standards"]}`}</p>
-                    <p>Sigma factor: {`${row["sigma_factor"]}`}</p>
                     <p>
                         <strong> Experience: </strong>
                         {isNaN(row["experience"])
                             ? `${row["experience"]}`
                             : `${row["experience"]} Star!!`}
                     </p>
+                    <p>Strength: {`${row["strength"]}`}</p>
                 </div>
             ),
             expanded: expanded,
@@ -250,7 +290,7 @@ class Promoter extends Component {
                 <Row className="my-3">
                     <Col className="d-flex justify-content-between">
                         <Button onClick={this.handClickBack}>
-                            Go back to Chassis & RFC selection
+                            Go back to Promoter selection
                         </Button>
                         <Button variant="warning" onClick={this.toggleLibrary}>
                             {fromLibrary && "Insert your own sequence"}
@@ -259,57 +299,88 @@ class Promoter extends Component {
                         <Button
                             variant="success"
                             onClick={this.handleClickContinue}
-                            disabled={selectedPromoter === ""}>
-                            Select promoter
+                            disabled={selectedRBS === ""}>
+                            Select RBS
                         </Button>
                     </Col>
                 </Row>
-                <Row className="justify-content-center align-items-center">
-                    <Col xs="12" md="2" className="mb-3">
-                        <h1>Promoter</h1>
+                <Row className="justify-content-center align-items-center mb-3">
+                    <Col xs="12" md="3" className="mb-3">
+                        <h1>RBS</h1>
                     </Col>
                     <Col xs="12" md="3">
                         <h5>
                             <strong>Chassis: </strong> {chassis}
                         </h5>
                     </Col>
-                    <Col xs="12" md="2">
+                    <Col xs="12" md="3">
                         <h5>
                             <strong>RFC: </strong>
                             {rfc}
                         </h5>
                     </Col>
+                    <Col xs="12" md="3">
+                        <h5>
+                            <strong>Promoter: </strong>
+                            {promoter}
+                        </h5>
+                    </Col>
                     {fromLibrary && (
                         <React.Fragment>
-                            <Col xs="12" md="3">
-                                <h5 className="mr-5">
+                            <Col xs="12" md="6">
+                                <h5 className="mr-5 d-inline-block">
                                     <strong>Status: </strong>
                                     {status || "All"}
                                 </h5>
-                            </Col>
-                            <Col xs="12" md="2" className="text-right">
                                 <DropdownButton
                                     id="dropdown-status-promoter"
-                                    title="Status">
+                                    title="Status"
+                                    className="mr-5 d-inline-block">
                                     <Dropdown.Item
                                         eventKey="0"
-                                        onSelect={this.handleClickStatus}>
+                                        onSelect={this.handleSelectStatus}>
                                         All
                                     </Dropdown.Item>
                                     <Dropdown.Item
                                         eventKey="1"
-                                        onSelect={this.handleClickStatus}>
+                                        onSelect={this.handleSelectStatus}>
                                         In stock
                                     </Dropdown.Item>
                                     <Dropdown.Item
                                         eventKey="2"
-                                        onSelect={this.handleClickStatus}>
+                                        onSelect={this.handleSelectStatus}>
                                         Not in stock
                                     </Dropdown.Item>
                                     <Dropdown.Item
                                         eventKey="3"
-                                        onSelect={this.handleClickStatus}>
+                                        onSelect={this.handleSelectStatus}>
                                         It's complicated
+                                    </Dropdown.Item>
+                                </DropdownButton>
+                            </Col>
+                            <Col xs="12" md="6">
+                                <h5 className="mr-5 d-inline-block">
+                                    <strong>Type: </strong>
+                                    {type || "All"}
+                                </h5>
+                                <DropdownButton
+                                    id="dropdown-status-promoter"
+                                    title="Status"
+                                    className="mr-5 d-inline-block">
+                                    <Dropdown.Item
+                                        eventKey="0"
+                                        onSelect={this.handleSelectType}>
+                                        All
+                                    </Dropdown.Item>
+                                    <Dropdown.Item
+                                        eventKey="1"
+                                        onSelect={this.handleSelectType}>
+                                        Prokaryotic
+                                    </Dropdown.Item>
+                                    <Dropdown.Item
+                                        eventKey="2"
+                                        onSelect={this.handleSelectType}>
+                                        Eukaryotic
                                     </Dropdown.Item>
                                 </DropdownButton>
                             </Col>
@@ -348,7 +419,7 @@ class Promoter extends Component {
                                     </InputGroup.Text>
                                 </InputGroup.Prepend>
                                 <FormControl
-                                    value={selectedPromoter}
+                                    value={typedRBS}
                                     onChange={this.handleChangeSequence}
                                     placeholder="Sequence"
                                     aria-label="sequence"

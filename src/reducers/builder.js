@@ -4,7 +4,8 @@ const initialState = {
     promoter: "",
     terminator: "",
     chassis: "",
-    rbs: ""
+    rbs: "",
+    seq: ""
 }
 
 export const builder = (state = initialState, action) => {
@@ -23,6 +24,11 @@ export const builder = (state = initialState, action) => {
             return {
                 ...state,
                 promoter: action.promoter
+            }
+        case builderConstants.SELECT_RBS:
+            return {
+                ...state,
+                rbs: action.rbs
             }
         default:
             return state
