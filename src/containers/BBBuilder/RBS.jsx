@@ -3,9 +3,12 @@ import { connect } from "react-redux"
 import { Redirect } from "react-router-dom"
 import { rbsRef } from "../../config/firebase"
 
-//Style
-
 import { builderActions } from "../../actions"
+//Components
+import ColorCodes from "../../components/BBBuilder/ColorCodes"
+import InfoBar from "../../components/BBBuilder/InfoBar"
+import SampleStockStatus from "../../components/BBBuilder/SampleStockStatus"
+import InputSequence from "../../components/BBBuilder/InputSequence"
 
 //Table
 import BootstrapTable from "react-bootstrap-table-next"
@@ -23,8 +26,6 @@ import Col from "react-bootstrap/lib/Col"
 import DropdownButton from "react-bootstrap/lib/DropdownButton"
 import Dropdown from "react-bootstrap/lib/Dropdown"
 import Button from "react-bootstrap/lib/Button"
-import InputGroup from "react-bootstrap/lib/InputGroup"
-import FormControl from "react-bootstrap/lib/FormControl"
 
 const selectOptions = {
     ConstitutiveAndersonLibrary: "Constitutive Anderson",
@@ -127,16 +128,16 @@ class Promoter extends Component {
             selectedRBS: "",
             typedRBS: "",
             expanded: [],
-            fromLibrary: true
+            inLibrary: true
         }
         this.handleSelectStatus = this.handleSelectStatus.bind(this)
         this.handleSelectType = this.handleSelectType.bind(this)
         this.handClickBack = this.handClickBack.bind(this)
         this.handleClickContinue = this.handleClickContinue.bind(this)
         this.toggleLibrary = this.toggleLibrary.bind(this)
-        this.handleChangeSequence = this.handleChangeSequence.bind(this)
+        this.handleTypeSequence = this.handleTypeSequence.bind(this)
     }
-    handleChangeSequence = event => {
+    handleTypeSequence = event => {
         this.setState({ typedRBS: event.target.value })
     }
     handClickBack = () => {
@@ -144,24 +145,27 @@ class Promoter extends Component {
         history.push("/bbbuilder/promoter")
     }
     toggleLibrary = () => {
-        const { fromLibrary } = this.state
-        if (fromLibrary) {
+        const { inLibrary } = this.state
+        if (inLibrary) {
             this.setState({
-                fromLibrary: !fromLibrary,
-                typed: ""
+                inLibrary: !inLibrary,
+                typedRBS: "",
+                selectedRBS: "",
+                expanded: []
             })
         } else {
             this.setState({
-                fromLibrary: !fromLibrary,
+                inLibrary: !inLibrary,
+                typedRBS: "",
                 selectedRBS: "",
                 expanded: []
             })
         }
     }
     handleClickContinue = () => {
-        const { selectedRBS } = this.state
+        const { selectedRBS, typedRBS } = this.state
         const { dispatch } = this.props
-        dispatch(builderActions.selectRBS(selectedRBS))
+        dispatch(builderActions.selectRBS(selectedRBS || typedRBS))
         const { history } = this.props
         history.push("/bbbuilder/codingsequence")
     }
@@ -260,7 +264,7 @@ class Promoter extends Component {
             filteredPayload,
             status,
             expanded,
-            fromLibrary,
+            inLibrary,
             selectedRBS,
             type,
             typedRBS
@@ -270,16 +274,26 @@ class Promoter extends Component {
         if (!promoter) return <Redirect to="/bbbuilder/promotere" />
         const expandRow = {
             renderer: row => (
-                <div>
-                    <p>Sample status: {`${row["status"]}`}</p>
-                    <p>Compatible RFC standards: {`${row["standards"]}`}</p>
-                    <p>
-                        <strong> Experience: </strong>
-                        {isNaN(row["experience"])
-                            ? `${row["experience"]}`
-                            : `${row["experience"]} Star!!`}
-                    </p>
-                    <p>Strength: {`${row["strength"]}`}</p>
+                <div className="wrapper">
+                    <div className="content">
+                        <p>Sample status: {`${row["status"]}`}</p>
+                        <p>Compatible RFC standards: {`${row["standards"]}`}</p>
+                        <p>
+                            <strong> Experience: </strong>
+                            {isNaN(row["experience"])
+                                ? `${row["experience"]}`
+                                : `${row["experience"]} Star!!`}
+                        </p>
+                        <p>Strength: {`${row["strength"]}`}</p>
+                    </div>
+                    <div className="sidebar">
+                        <Button
+                            variant="success"
+                            onClick={this.handleClickContinue}
+                            disabled={selectedRBS === ""}>
+                            Select RBS
+                        </Button>
+                    </div>
                 </div>
             ),
             expanded: expanded,
@@ -287,85 +301,34 @@ class Promoter extends Component {
         }
         return (
             <Container>
+                <InfoBar
+                    statusPosition={"RBS"}
+                    chassis={chassis}
+                    rfc={rfc}
+                    promoter={promoter}
+                />
                 <Row className="my-3">
                     <Col className="d-flex justify-content-between">
                         <Button onClick={this.handClickBack}>
                             Go back to Promoter selection
                         </Button>
                         <Button variant="warning" onClick={this.toggleLibrary}>
-                            {fromLibrary && "Insert your own sequence"}
-                            {!fromLibrary && "Select from the library"}
-                        </Button>
-                        <Button
-                            variant="success"
-                            onClick={this.handleClickContinue}
-                            disabled={selectedRBS === ""}>
-                            Select RBS
+                            {inLibrary && "Insert your own sequence"}
+                            {!inLibrary && "Select from the library"}
                         </Button>
                     </Col>
                 </Row>
-                <Row className="justify-content-center align-items-center mb-3">
-                    <Col xs="12" md="3" className="mb-3">
-                        <h1>RBS</h1>
-                    </Col>
-                    <Col xs="12" md="3">
-                        <h5>
-                            <strong>Chassis: </strong> {chassis}
-                        </h5>
-                    </Col>
-                    <Col xs="12" md="3">
-                        <h5>
-                            <strong>RFC: </strong>
-                            {rfc}
-                        </h5>
-                    </Col>
-                    <Col xs="12" md="3">
-                        <h5>
-                            <strong>Promoter: </strong>
-                            {promoter}
-                        </h5>
-                    </Col>
-                    {fromLibrary && (
-                        <React.Fragment>
+                {inLibrary && (
+                    <React.Fragment>
+                        <Row className="mb-4">
+                            <ColorCodes />
                             <Col xs="12" md="6">
-                                <h5 className="mr-5 d-inline-block">
-                                    <strong>Status: </strong>
-                                    {status || "All"}
-                                </h5>
-                                <DropdownButton
-                                    id="dropdown-status-promoter"
-                                    title="Status"
-                                    className="mr-5 d-inline-block">
-                                    <Dropdown.Item
-                                        eventKey="0"
-                                        onSelect={this.handleSelectStatus}>
-                                        All
-                                    </Dropdown.Item>
-                                    <Dropdown.Item
-                                        eventKey="1"
-                                        onSelect={this.handleSelectStatus}>
-                                        In stock
-                                    </Dropdown.Item>
-                                    <Dropdown.Item
-                                        eventKey="2"
-                                        onSelect={this.handleSelectStatus}>
-                                        Not in stock
-                                    </Dropdown.Item>
-                                    <Dropdown.Item
-                                        eventKey="3"
-                                        onSelect={this.handleSelectStatus}>
-                                        It's complicated
-                                    </Dropdown.Item>
-                                </DropdownButton>
-                            </Col>
-                            <Col xs="12" md="6">
-                                <h5 className="mr-5 d-inline-block">
+                                <h5 className="mr-3 d-inline-block">
                                     <strong>Type: </strong>
-                                    {type || "All"}
                                 </h5>
                                 <DropdownButton
-                                    id="dropdown-status-promoter"
-                                    title="Status"
+                                    id="dropdown-status-type-rbs"
+                                    title={type || "All"}
                                     className="mr-5 d-inline-block">
                                     <Dropdown.Item
                                         eventKey="0"
@@ -384,50 +347,37 @@ class Promoter extends Component {
                                     </Dropdown.Item>
                                 </DropdownButton>
                             </Col>
-                        </React.Fragment>
-                    )}
-                </Row>
-                {fromLibrary && (
-                    <Row>
-                        <Col xs="12">
-                            {filteredPayload && (
-                                <BootstrapTable
-                                    keyField="name"
-                                    columns={columns}
-                                    data={filteredPayload}
-                                    pagination={paginationFactory(
-                                        paginationOptions
-                                    )}
-                                    filter={filterFactory()}
-                                    bootstrap4={true}
-                                    rowStyle={this.rowStyle}
-                                    expandRow={expandRow}
-                                    selectRow={selectRow}
-                                />
-                            )}
-                        </Col>
-                    </Row>
+                            <SampleStockStatus
+                                val={status}
+                                handler={this.handleSelectStatus}
+                            />
+                        </Row>
+                        <Row>
+                            <Col xs="12">
+                                {filteredPayload && (
+                                    <BootstrapTable
+                                        keyField="name"
+                                        columns={columns}
+                                        data={filteredPayload}
+                                        pagination={paginationFactory(
+                                            paginationOptions
+                                        )}
+                                        filter={filterFactory()}
+                                        bootstrap4={true}
+                                        rowStyle={this.rowStyle}
+                                        expandRow={expandRow}
+                                        selectRow={selectRow}
+                                    />
+                                )}
+                            </Col>
+                        </Row>
+                    </React.Fragment>
                 )}
-                {!fromLibrary && (
-                    <Row>
-                        <Col>
-                            <h2>Insert your own sequence </h2>
-                            <InputGroup className="mb-3">
-                                <InputGroup.Prepend>
-                                    <InputGroup.Text id="basic-sequence">
-                                        Sequence
-                                    </InputGroup.Text>
-                                </InputGroup.Prepend>
-                                <FormControl
-                                    value={typedRBS}
-                                    onChange={this.handleChangeSequence}
-                                    placeholder="Sequence"
-                                    aria-label="sequence"
-                                    aria-describedby="basic-sequence"
-                                />
-                            </InputGroup>
-                        </Col>
-                    </Row>
+                {!inLibrary && (
+                    <InputSequence
+                        val={typedRBS}
+                        handler={this.handleTypeSequence}
+                    />
                 )}
             </Container>
         )

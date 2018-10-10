@@ -16,9 +16,20 @@ const selectRBS = rbs => ({
     type: builderConstants.SELECT_RBS,
     rbs: rbs
 })
+const selectSequence = sequence => ({
+    type: builderConstants.SELECT_SEQUENCE,
+    sequence: sequence
+})
+const selectTerminator = terminator => ({
+    type: builderConstants.SELECT_TERMINATOR,
+    terminator: terminator
+})
+
 export const builderActions = {
     selectRFC,
     selectChassis,
     selectPromoter,
-    selectRBS
+    selectRBS,
+    selectSequence,
+    selectTerminator
 }

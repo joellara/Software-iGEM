@@ -29,3 +29,40 @@
     flex-direction: column;
     justify-content: space-around;
 }
+.color-code {
+    height: 20px !important;
+    width: 20px !important;
+    display: inline-block;
+    vertical-align: middle;
+}
+.color-code.green {
+    background-color: rgb(158, 202, 141);
+}
+.color-code.red {
+    background-color: #f38484;
+}
+.color-code.yellow {
+    background-color: rgb(255, 217, 30);
+}
+.lead strong {
+    font-weight: 600;
+    letter-spacing: 1px;
+    font-size: 1.25em;
+}
+.react-bootstrap-table .table thead tr th {
+    vertical-align: middle !important;
+}
+.color-codes p {
+    display: inline-block;
+    margin-right: 3rem;
+}
+.wrapper {
+    display: flex;
+}
+.wrapper .sidebar {
+    width: 15%;
+    text-align: right;
+}
+.wrapper .content {
+    width: 85%;
+}

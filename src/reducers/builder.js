@@ -5,7 +5,7 @@ const initialState = {
     terminator: "",
     chassis: "",
     rbs: "",
-    seq: ""
+    sequence: ""
 }
 
 export const builder = (state = initialState, action) => {
@@ -29,6 +29,16 @@ export const builder = (state = initialState, action) => {
             return {
                 ...state,
                 rbs: action.rbs
+            }
+        case builderConstants.SELECT_SEQUENCE:
+            return {
+                ...state,
+                sequence: action.sequence
+            }
+        case builderConstants.SELECT_TERMINATOR:
+            return {
+                ...state,
+                terminator: action.terminator
             }
         default:
             return state

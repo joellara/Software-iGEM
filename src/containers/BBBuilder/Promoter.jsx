@@ -2,10 +2,13 @@ import React, { Component } from "react"
 import { connect } from "react-redux"
 import { Redirect } from "react-router-dom"
 import { promotersRef } from "../../config/firebase"
-
-//Style
-
 import { builderActions } from "../../actions"
+
+//Components
+import ColorCodes from "../../components/BBBuilder/ColorCodes"
+import InfoBar from "../../components/BBBuilder/InfoBar"
+import SampleStockStatus from "../../components/BBBuilder/SampleStockStatus"
+import InputSequence from "../../components/BBBuilder/InputSequence"
 
 //Table
 import BootstrapTable from "react-bootstrap-table-next"
@@ -20,11 +23,7 @@ import "../../css/table.css"
 import Container from "react-bootstrap/lib/Container"
 import Row from "react-bootstrap/lib/Row"
 import Col from "react-bootstrap/lib/Col"
-import DropdownButton from "react-bootstrap/lib/DropdownButton"
-import Dropdown from "react-bootstrap/lib/Dropdown"
 import Button from "react-bootstrap/lib/Button"
-import InputGroup from "react-bootstrap/lib/InputGroup"
-import FormControl from "react-bootstrap/lib/FormControl"
 
 const selectOptions = {
     Inducible: "Inducible",
@@ -36,59 +35,6 @@ const IN_STOCK = "In stock"
 const NOT_IN_STOCK = "Not in stock"
 const COMPLICATED = "It's complicated"
 const ALL = "All"
-const columns = [
-    {
-        dataField: "name",
-        text: "Product Name",
-        filter: textFilter(),
-        sort: true,
-        style: (cell, row, rowIndex, colIndex) => ({
-            width: "30%"
-        })
-    },
-    {
-        dataField: "desc",
-        text: "Product Description",
-        filter: textFilter(),
-        sort: true,
-        style: (cell, row, rowIndex, colIndex) => ({
-            width: "30%"
-        })
-    },
-    {
-        dataField: "regulation",
-        text: "Regulation",
-        formatter: cell => selectOptions[cell],
-        filter: selectFilter({
-            options: selectOptions
-        }),
-        style: (cell, row, rowIndex, colIndex) => ({
-            width: "30%"
-        })
-    },
-    {
-        dataField: "status",
-        text: "Product Status",
-        hidden: true
-    },
-    {
-        dataField: "link",
-        isDummyField: true,
-        text: "Link to iGEM",
-        formatter: (cellContent, row) => {
-            return (
-                <Button
-                    href={`http://parts.igem.org/Part:${row["name"]}`}
-                    target="_blank">
-                    Link
-                </Button>
-            )
-        },
-        style: (cell, row, rowIndex, colIndex) => ({
-            width: "10%"
-        })
-    }
-]
 const selectRow = {
     mode: "radio",
     clickToSelect: true,
@@ -110,37 +56,52 @@ class Promoter extends Component {
             status: "",
             payload: [],
             filteredPayload: [],
+            typedPromoter: "",
             selectedPromoter: "",
             expanded: [],
-            fromLibrary: true
+            inLibrary: true
         }
-        this.handleClickStatus = this.handleClickStatus.bind(this)
+        this.handleSelectStatus = this.handleSelectStatus.bind(this)
         this.handClickBack = this.handClickBack.bind(this)
         this.handleClickContinue = this.handleClickContinue.bind(this)
         this.toggleLibrary = this.toggleLibrary.bind(this)
-        this.handleChangeSequence = this.handleChangeSequence.bind(this)
+        this.handleTypeSequence = this.handleTypeSequence.bind(this)
     }
-    handleChangeSequence = event => {
-        this.setState({ selectedPromoter: event.target.value })
+    handleTypeSequence = event => {
+        this.setState({ typedPromoter: event.target.value })
     }
     handClickBack = () => {
         const { history } = this.props
         history.push("/bbbuilder")
     }
     toggleLibrary = () => {
-        const { fromLibrary } = this.state
-        this.setState({
-            fromLibrary: !fromLibrary
-        })
+        const { inLibrary } = this.state
+        if (inLibrary) {
+            this.setState({
+                inLibrary: !inLibrary,
+                typedPromoter: "",
+                selectedPromoter: "",
+                expanded: []
+            })
+        } else {
+            this.setState({
+                inLibrary: !inLibrary,
+                typedPromoter: "",
+                selectedPromoter: "",
+                expanded: []
+            })
+        }
     }
     handleClickContinue = () => {
-        const { selectedPromoter } = this.state
+        const { selectedPromoter, typedPromoter } = this.state
         const { dispatch } = this.props
-        dispatch(builderActions.selectPromoter(selectedPromoter))
+        dispatch(
+            builderActions.selectPromoter(selectedPromoter || typedPromoter)
+        )
         const { history } = this.props
         history.push("/bbbuilder/rbs")
     }
-    handleClickStatus = e => {
+    handleSelectStatus = e => {
         const dataStatus = [ALL, IN_STOCK, NOT_IN_STOCK, COMPLICATED]
         let { rfc, chassis } = this.props.builder
         rfc = rfc.replace(/\s/g, "")
@@ -221,142 +182,157 @@ class Promoter extends Component {
         const {
             filteredPayload,
             status,
+            typedPromoter,
             expanded,
-            fromLibrary,
+            inLibrary,
             selectedPromoter
         } = this.state
         const { rfc, chassis } = this.props.builder
         if (!rfc || !chassis) return <Redirect to="/bbbuilder" />
+        const columns = [
+            {
+                dataField: "name",
+                text: "Product Name",
+                filter: textFilter(),
+                sort: true,
+                style: (cell, row, rowIndex, colIndex) => ({
+                    width: "15%"
+                })
+            },
+            {
+                dataField: "desc",
+                text: "Product Description",
+                filter: textFilter(),
+                sort: true,
+                style: (cell, row, rowIndex, colIndex) => ({
+                    width: "30%"
+                })
+            },
+            {
+                dataField: "regulation",
+                text: "Regulation",
+                formatter: cell => selectOptions[cell],
+                filter: selectFilter({
+                    options: selectOptions
+                }),
+                style: (cell, row, rowIndex, colIndex) => ({
+                    width: "15%"
+                })
+            },
+            {
+                dataField: "uses",
+                text: "Usos",
+                sort: true,
+                style: (cell, row, rowIndex, colIndex) => ({
+                    width: "15%"
+                })
+            },
+            {
+                dataField: "status",
+                text: "Product Status",
+                hidden: true
+            },
+            {
+                dataField: "link",
+                isDummyField: true,
+                text: "Link to iGEM",
+                formatter: (cellContent, row) => {
+                    return (
+                        <Button
+                            href={`http://parts.igem.org/Part:${row["name"]}`}
+                            target="_blank">
+                            Link to iGEM
+                        </Button>
+                    )
+                },
+                style: (cell, row, rowIndex, colIndex) => ({
+                    width: "10%"
+                })
+            }
+        ]
         const expandRow = {
             renderer: row => (
-                <div>
-                    <p>Sample status: {`${row["status"]}`}</p>
-                    <p>Length: {`${row["length"]}`}</p>
-                    <p>Compatible RFC standards: {`${row["standards"]}`}</p>
-                    <p>Sigma factor: {`${row["sigma_factor"]}`}</p>
-                    <p>
-                        <strong> Experience: </strong>
-                        {isNaN(row["experience"])
-                            ? `${row["experience"]}`
-                            : `${row["experience"]} Star!!`}
-                    </p>
+                <div className="wrapper">
+                    <div className="content">
+                        <p>Sample status: {`${row["status"]}`}</p>
+                        <p>Length: {`${row["length"]}`}</p>
+                        <p>Compatible RFC standards: {`${row["standards"]}`}</p>
+                        <p>Sigma factor: {`${row["sigma_factor"]}`}</p>
+                        <p>
+                            <strong> Experience: </strong>
+                            {isNaN(row["experience"])
+                                ? `${row["experience"]}`
+                                : `${row["experience"]} Star!!`}
+                        </p>
+                    </div>
+                    <div className="sidebar">
+                        <Button
+                            variant="success"
+                            onClick={this.handleClickContinue}
+                            disabled={
+                                selectedPromoter === "" && typedPromoter === ""
+                            }>
+                            Select promoter
+                        </Button>
+                    </div>
                 </div>
             ),
             expanded: expanded,
             onExpand: this.handleOnExpand
         }
         return (
-            <Container>
+            <Container className="mb-5">
+                <InfoBar
+                    statusPosition={"Promoter"}
+                    chassis={chassis}
+                    rfc={rfc}
+                />
                 <Row className="my-3">
                     <Col className="d-flex justify-content-between">
                         <Button onClick={this.handClickBack}>
                             Go back to Chassis & RFC selection
                         </Button>
                         <Button variant="warning" onClick={this.toggleLibrary}>
-                            {fromLibrary && "Insert your own sequence"}
-                            {!fromLibrary && "Select from the library"}
-                        </Button>
-                        <Button
-                            variant="success"
-                            onClick={this.handleClickContinue}
-                            disabled={selectedPromoter === ""}>
-                            Select promoter
+                            {inLibrary && "Insert your own sequence"}
+                            {!inLibrary && "Select from the library"}
                         </Button>
                     </Col>
                 </Row>
-                <Row className="justify-content-center align-items-center">
-                    <Col xs="12" md="2" className="mb-3">
-                        <h1>Promoter</h1>
-                    </Col>
-                    <Col xs="12" md="3">
-                        <h5>
-                            <strong>Chassis: </strong> {chassis}
-                        </h5>
-                    </Col>
-                    <Col xs="12" md="2">
-                        <h5>
-                            <strong>RFC: </strong>
-                            {rfc}
-                        </h5>
-                    </Col>
-                    {fromLibrary && (
-                        <React.Fragment>
-                            <Col xs="12" md="3">
-                                <h5 className="mr-5">
-                                    <strong>Status: </strong>
-                                    {status || "All"}
-                                </h5>
+                {inLibrary && (
+                    <React.Fragment>
+                        <Row>
+                            <ColorCodes />
+                            <SampleStockStatus
+                                val={status}
+                                handler={this.handleSelectStatus}
+                            />
+                        </Row>
+                        <Row>
+                            <Col xs="12">
+                                {filteredPayload && (
+                                    <BootstrapTable
+                                        keyField="name"
+                                        columns={columns}
+                                        data={filteredPayload}
+                                        pagination={paginationFactory(
+                                            paginationOptions
+                                        )}
+                                        filter={filterFactory()}
+                                        bootstrap4={true}
+                                        rowStyle={this.rowStyle}
+                                        expandRow={expandRow}
+                                        selectRow={selectRow}
+                                    />
+                                )}
                             </Col>
-                            <Col xs="12" md="2" className="text-right">
-                                <DropdownButton
-                                    id="dropdown-status-promoter"
-                                    title="Status">
-                                    <Dropdown.Item
-                                        eventKey="0"
-                                        onSelect={this.handleClickStatus}>
-                                        All
-                                    </Dropdown.Item>
-                                    <Dropdown.Item
-                                        eventKey="1"
-                                        onSelect={this.handleClickStatus}>
-                                        In stock
-                                    </Dropdown.Item>
-                                    <Dropdown.Item
-                                        eventKey="2"
-                                        onSelect={this.handleClickStatus}>
-                                        Not in stock
-                                    </Dropdown.Item>
-                                    <Dropdown.Item
-                                        eventKey="3"
-                                        onSelect={this.handleClickStatus}>
-                                        It's complicated
-                                    </Dropdown.Item>
-                                </DropdownButton>
-                            </Col>
-                        </React.Fragment>
-                    )}
-                </Row>
-                {fromLibrary && (
-                    <Row>
-                        <Col xs="12">
-                            {filteredPayload && (
-                                <BootstrapTable
-                                    keyField="name"
-                                    columns={columns}
-                                    data={filteredPayload}
-                                    pagination={paginationFactory(
-                                        paginationOptions
-                                    )}
-                                    filter={filterFactory()}
-                                    bootstrap4={true}
-                                    rowStyle={this.rowStyle}
-                                    expandRow={expandRow}
-                                    selectRow={selectRow}
-                                />
-                            )}
-                        </Col>
-                    </Row>
+                        </Row>
+                    </React.Fragment>
                 )}
-                {!fromLibrary && (
-                    <Row>
-                        <Col>
-                            <h2>Insert your own sequence </h2>
-                            <InputGroup className="mb-3">
-                                <InputGroup.Prepend>
-                                    <InputGroup.Text id="basic-sequence">
-                                        Sequence
-                                    </InputGroup.Text>
-                                </InputGroup.Prepend>
-                                <FormControl
-                                    value={selectedPromoter}
-                                    onChange={this.handleChangeSequence}
-                                    placeholder="Sequence"
-                                    aria-label="sequence"
-                                    aria-describedby="basic-sequence"
-                                />
-                            </InputGroup>
-                        </Col>
-                    </Row>
+                {!inLibrary && (
+                    <InputSequence
+                        val={typedPromoter}
+                        handler={this.handleTypeSequence}
+                    />
                 )}
             </Container>
         )
