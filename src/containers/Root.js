@@ -3,9 +3,10 @@ import PropTypes from "prop-types";
 import { Provider } from "react-redux";
 import { Route, NavLink } from "react-router-dom";
 import App from "./App";
+import '../App.css' 
 import CellCount from "./CellCount";
 import ActivityLog from "./ActivityLog"
-import firebase from 'firebase';
+import NewProyect from './NewProyect';
 
 const Root = ({ store }) => (
   <Provider store={store}>
@@ -43,12 +44,18 @@ const Root = ({ store }) => (
                 Activity Log
               </NavLink>
             </li>
+            <li className="nav-item">
+              <NavLink className="nav-link newProyectNavBar" to="/newProyect">
+                +
+              </NavLink>
+            </li>
           </ul>
         </div>
       </nav>
       <Route exact path="/" component={App} />
       <Route path="/cellcount" component={CellCount} />
       <Route path="/activitylog" component={ActivityLog} />
+      <Route path="/newProyect" component={NewProyect} />
     </div>
   </Provider>
 );

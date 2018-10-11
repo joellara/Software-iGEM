@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import { Row, Col } from "react-bootstrap";
+import { Row, Col, Tooltip, OverlayTrigger } from "react-bootstrap";
 import firebase from 'firebase';
 import '../App.css'
 
-export class NewProyect extends Component {
+export default class NewProyect extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -33,6 +33,13 @@ export class NewProyect extends Component {
       mensajeAlerta = <p> {this.state.errorMessage}</p>;
     }
 
+    var x = 30;
+    var y = 48;
+    var z = 174;
+
+    var res = (x<<6)+(y<<3)+(z) 
+    debugger;
+
     return (
       <div>
 
@@ -43,7 +50,7 @@ export class NewProyect extends Component {
                 style={{width:'100%', borderRadius:'10px'}}
                 type="text"
                 value={this.state.name}
-                placeholder="Name and Lastname"
+                placeholder="Name your proyect"
                 onChange={this.handleChange}
                 name="name"
               />
