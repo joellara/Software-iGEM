@@ -5,8 +5,9 @@ import { Route } from "react-router-dom"
 import Promoter from "./BBBuilder/Promoter"
 import Base from "./BBBuilder/Base"
 import RBS from "./BBBuilder/RBS"
-import Terminators from "./BBBuilder/Terminators"
 import CodingSequence from "./BBBuilder/CodingSequence"
+import Terminators from "./BBBuilder/Terminators"
+import ResultBB from "./BBBuilder/ResultBB"
 export class BiobrickBuilder extends Component {
     render() {
         const { match } = this.props
@@ -16,13 +17,14 @@ export class BiobrickBuilder extends Component {
                 <Route path={`${match.url}/promoter`} component={Promoter} />
                 <Route path={`${match.url}/rbs`} component={RBS} />
                 <Route
-                    path={`${match.url}/terminators`}
-                    component={Terminators}
-                />
-                <Route
                     path={`${match.url}/codingsequence`}
                     component={CodingSequence}
                 />
+                <Route
+                    path={`${match.url}/terminators`}
+                    component={Terminators}
+                />
+                <Route path={`${match.url}/resultbb`} component={ResultBB} />
             </div>
         )
     }

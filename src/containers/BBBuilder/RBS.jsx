@@ -117,7 +117,7 @@ const paginationOptions = {
         </span>
     )
 }
-class Promoter extends Component {
+class RBS extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -143,6 +143,25 @@ class Promoter extends Component {
     handClickBack = () => {
         const { history } = this.props
         history.push("/bbbuilder/promoter")
+    }
+    getSequence = row => {
+        builderActions
+            .getSequence(row.name)
+            .then(response => {
+                this.setState({
+                    filteredPayload: this.state.filteredPayload.map(val => {
+                        if (val["name"] === row.name) {
+                            val["sequence"] = response.data[
+                                Object.keys(response.data)[0]
+                            ].sequence.replace(/\s/g, "")
+                        }
+                        return val
+                    })
+                })
+            })
+            .catch(error => {
+                console.log(error)
+            })
     }
     toggleLibrary = () => {
         const { inLibrary } = this.state
@@ -191,7 +210,7 @@ class Promoter extends Component {
     }
     handleSelectStatus = e => {
         const dataStatus = [ALL, IN_STOCK, NOT_IN_STOCK, COMPLICATED]
-        let { rfc, chassis } = this.props.builder
+        let { rfc } = this.props.builder
         rfc = rfc.replace(/\s/g, "")
         this.setState({
             filteredPayload: this.state.payload.filter(val => {
@@ -246,7 +265,7 @@ class Promoter extends Component {
     }
     componentDidMount() {
         let {
-            builder: { rfc, chassis }
+            builder: { rfc }
         } = this.props
         rfc = rfc.replace(/\s/g, "")
         rbsRef.on("value", snapshot => {
@@ -271,7 +290,7 @@ class Promoter extends Component {
         } = this.state
         const { rfc, chassis, promoter } = this.props.builder
         if (!rfc || !chassis) return <Redirect to="/bbbuilder" />
-        if (!promoter) return <Redirect to="/bbbuilder/promotere" />
+        if (!promoter) return <Redirect to="/bbbuilder/promoter" />
         const expandRow = {
             renderer: row => (
                 <div className="wrapper">
@@ -285,6 +304,17 @@ class Promoter extends Component {
                                 : `${row["experience"]} Star!!`}
                         </p>
                         <p>Strength: {`${row["strength"]}`}</p>
+                        {row["sequence"] && (
+                            <p className="sequence">
+                                <strong>Sequence: </strong>{" "}
+                                {`${row["sequence"]}`}
+                            </p>
+                        )}
+                        {!row["sequence"] && (
+                            <Button onClick={() => this.getSequence(row)}>
+                                Get Sequence
+                            </Button>
+                        )}
                     </div>
                     <div className="sidebar">
                         <Button
@@ -387,4 +417,4 @@ class Promoter extends Component {
 const mapStateToProps = ({ builder }) => ({
     builder
 })
-export default connect(mapStateToProps)(Promoter)
+export default connect(mapStateToProps)(RBS)

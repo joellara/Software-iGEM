@@ -1,5 +1,5 @@
-import { builderConstants } from "../constants"
-
+import { builderConstants, RFC10 } from "../constants"
+import axios from "axios"
 const selectRFC = RFC => ({
     type: builderConstants.SELECT_RFC,
     rfc: RFC
@@ -24,12 +24,39 @@ const selectTerminator = terminator => ({
     type: builderConstants.SELECT_TERMINATOR,
     terminator: terminator
 })
-
+const getSequence = bbName => {
+    return axios.get(
+        `https://igem-texem.firebaseio.com/parts/sequences.json?print=pretty&orderBy="name"&equalTo="${bbName}"`
+    )
+}
+const createBioBrick = (rfc, ...rest) => {
+    switch (rfc) {
+        case RFC10.name:
+            return createRFC10(...rest)
+        default:
+            break
+    }
+}
+const createRFC10 = (promoter, rbs, sequence, terminator) => {
+    return (
+        RFC10.prefix +
+        promoter +
+        RFC10.scar +
+        rbs +
+        RFC10.scar2 +
+        sequence +
+        RFC10.scar +
+        terminator +
+        RFC10.suffix
+    )
+}
 export const builderActions = {
     selectRFC,
     selectChassis,
     selectPromoter,
     selectRBS,
     selectSequence,
-    selectTerminator
+    selectTerminator,
+    getSequence,
+    createBioBrick
 }

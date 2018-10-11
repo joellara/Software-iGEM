@@ -1,9 +1,8 @@
 import React, { Component } from "react"
 import { connect } from "react-redux"
 import { Redirect } from "react-router-dom"
-import { promotersRef } from "../../config/firebase"
+import { terminatorsRef } from "../../config/firebase"
 import { builderActions } from "../../actions"
-
 //Components
 import ColorCodes from "../../components/BBBuilder/ColorCodes"
 import InfoBar from "../../components/BBBuilder/InfoBar"
@@ -26,15 +25,86 @@ import Col from "react-bootstrap/lib/Col"
 import Button from "react-bootstrap/lib/Button"
 
 const selectOptions = {
-    Inducible: "Inducible",
-    Constitutive: "Constitutive",
-    Repressible: "Repressible",
-    Multiple: "Multiple"
+    Forward: "Forward",
+    Reverse: "Reverse",
+    Yeast: "Yeast"
 }
+
 const IN_STOCK = "In stock"
 const NOT_IN_STOCK = "Not in stock"
 const COMPLICATED = "It's complicated"
 const ALL = "All"
+
+const columns = [
+    {
+        dataField: "name",
+        text: "Product Name",
+        filter: textFilter(),
+        sort: true,
+        style: (cell, row, rowIndex, colIndex) => ({
+            width: "20%"
+        })
+    },
+    {
+        dataField: "description",
+        text: "Product Description",
+        filter: textFilter(),
+        sort: true,
+        style: (cell, row, rowIndex, colIndex) => ({
+            width: "30%"
+        })
+    },
+    {
+        dataField: "type",
+        text: "Category",
+        formatter: cell => selectOptions[cell],
+        filter: selectFilter({
+            options: selectOptions
+        }),
+        sort: true,
+        style: (cell, row, rowIndex, colIndex) => ({
+            width: "20%"
+        })
+    },
+    {
+        dataField: "forward",
+        text: "Forward Efficiency",
+        sort: true,
+        style: (cell, row, rowIndex, colIndex) => ({
+            width: "10%"
+        })
+    },
+    {
+        dataField: "reverse",
+        text: "Reverse Efficiency",
+        sort: true,
+        style: (cell, row, rowIndex, colIndex) => ({
+            width: "10%"
+        })
+    },
+    {
+        dataField: "status",
+        text: "Product Status",
+        hidden: true
+    },
+    {
+        dataField: "link",
+        isDummyField: true,
+        text: "Link to iGEM",
+        formatter: (cellContent, row) => {
+            return (
+                <Button
+                    href={`http://parts.igem.org/Part:${row["name"]}`}
+                    target="_blank">
+                    Link
+                </Button>
+            )
+        },
+        style: (cell, row, rowIndex, colIndex) => ({
+            width: "10%"
+        })
+    }
+]
 const selectRow = {
     mode: "radio",
     clickToSelect: true,
@@ -49,15 +119,15 @@ const paginationOptions = {
         </span>
     )
 }
-class Promoter extends Component {
+class Terminator extends Component {
     constructor(props) {
         super(props)
         this.state = {
             status: "",
             payload: [],
             filteredPayload: [],
-            typedPromoter: "",
-            selectedPromoter: "",
+            selectedTerminator: "",
+            typedTerminator: "",
             expanded: [],
             inLibrary: true
         }
@@ -68,11 +138,29 @@ class Promoter extends Component {
         this.handleTypeSequence = this.handleTypeSequence.bind(this)
     }
     handleTypeSequence = event => {
-        this.setState({ typedPromoter: event.target.value })
+        this.setState({ typedTerminator: event.target.value })
     }
     handClickBack = () => {
         const { history } = this.props
-        history.push("/bbbuilder")
+        history.push("/bbbuilder/codingsequence")
+    }
+    toggleLibrary = () => {
+        const { inLibrary } = this.state
+        if (inLibrary) {
+            this.setState({
+                inLibrary: !inLibrary,
+                typedTerminator: "",
+                selectedTerminator: "",
+                expanded: []
+            })
+        } else {
+            this.setState({
+                inLibrary: !inLibrary,
+                typedTerminator: "",
+                selectedTerminator: "",
+                expanded: []
+            })
+        }
     }
     getSequence = row => {
         builderActions
@@ -93,36 +181,21 @@ class Promoter extends Component {
                 console.log(error)
             })
     }
-    toggleLibrary = () => {
-        const { inLibrary } = this.state
-        if (inLibrary) {
-            this.setState({
-                inLibrary: !inLibrary,
-                typedPromoter: "",
-                selectedPromoter: "",
-                expanded: []
-            })
-        } else {
-            this.setState({
-                inLibrary: !inLibrary,
-                typedPromoter: "",
-                selectedPromoter: "",
-                expanded: []
-            })
-        }
-    }
     handleClickContinue = () => {
-        const { selectedPromoter, typedPromoter } = this.state
+        const { selectedTerminator, typedTerminator } = this.state
         const { dispatch } = this.props
         dispatch(
-            builderActions.selectPromoter(selectedPromoter || typedPromoter)
+            builderActions.selectTerminator(
+                selectedTerminator || typedTerminator
+            )
         )
         const { history } = this.props
-        history.push("/bbbuilder/rbs")
+        history.push("/bbbuilder/resultbb")
     }
+
     handleSelectStatus = e => {
         const dataStatus = [ALL, IN_STOCK, NOT_IN_STOCK, COMPLICATED]
-        let { rfc, chassis } = this.props.builder
+        let { rfc } = this.props.builder
         rfc = rfc.replace(/\s/g, "")
         this.setState({
             filteredPayload: this.state.payload.filter(val => {
@@ -141,12 +214,12 @@ class Promoter extends Component {
     handleOnExpand = (row, isExpand, rowIndex, e) => {
         if (isExpand) {
             this.setState(() => ({
-                selectedPromoter: row.name,
+                selectedTerminator: row.name,
                 expanded: [row.name]
             }))
         } else {
             this.setState(() => ({
-                selectedPromoter: "",
+                selectedTerminator: "",
                 expanded: []
             }))
         }
@@ -177,10 +250,10 @@ class Promoter extends Component {
     }
     componentDidMount() {
         let {
-            builder: { rfc, chassis }
+            builder: { rfc }
         } = this.props
         rfc = rfc.replace(/\s/g, "")
-        promotersRef.on("value", snapshot => {
+        terminatorsRef.on("value", snapshot => {
             this.setState(() => ({
                 ...this.state,
                 payload: snapshot.val(),
@@ -194,99 +267,31 @@ class Promoter extends Component {
         const {
             filteredPayload,
             status,
-            typedPromoter,
             expanded,
             inLibrary,
-            selectedPromoter
+            selectedTerminator,
+            typedTerminator
         } = this.state
-        const { rfc, chassis } = this.props.builder
+        const { rfc, chassis, promoter, sequence, rbs } = this.props.builder
         if (!rfc || !chassis) return <Redirect to="/bbbuilder" />
-        const columns = [
-            {
-                dataField: "name",
-                text: "Product Name",
-                filter: textFilter(),
-                sort: true,
-                style: (cell, row, rowIndex, colIndex) => ({
-                    width: "15%"
-                })
-            },
-            {
-                dataField: "desc",
-                text: "Product Description",
-                filter: textFilter(),
-                sort: true,
-                style: (cell, row, rowIndex, colIndex) => ({
-                    width: "30%"
-                })
-            },
-            {
-                dataField: "regulation",
-                text: "Regulation",
-                formatter: cell => selectOptions[cell],
-                filter: selectFilter({
-                    options: selectOptions
-                }),
-                style: (cell, row, rowIndex, colIndex) => ({
-                    width: "15%"
-                })
-            },
-            {
-                dataField: "uses",
-                text: "Usos",
-                sort: true,
-                style: (cell, row, rowIndex, colIndex) => ({
-                    width: "15%"
-                })
-            },
-            {
-                dataField: "status",
-                text: "Product Status",
-                hidden: true
-            },
-            {
-                dataField: "link",
-                isDummyField: true,
-                text: "Link to iGEM",
-                formatter: (cellContent, row) => {
-                    return (
-                        <Button
-                            href={`http://parts.igem.org/Part:${row["name"]}`}
-                            target="_blank">
-                            Link to iGEM
-                        </Button>
-                    )
-                },
-                style: (cell, row, rowIndex, colIndex) => ({
-                    width: "10%"
-                })
-            }
-        ]
+        if (!promoter) return <Redirect to="/bbbuilder/promoter" />
+        if (!rbs) return <Redirect to="/bbbuilder/rbs" />
+        if (!sequence) return <Redirect to="/bbbuilder/codingsequence" />
         const expandRow = {
             renderer: row => (
                 <div className="wrapper">
                     <div className="content">
-                        <p>
-                            <strong>Sample status: </strong>{" "}
-                            {`${row["status"]}`}
-                        </p>
-                        <p>
-                            <strong>Length: </strong> {`${row["length"]}`}
-                        </p>
-                        <p>
-                            <strong>Compatible RFC standards: </strong>{" "}
-                            {`${row["standards"]}`}
-                        </p>
-                        <p>
-                            <strong>Sigma factor: </strong>{" "}
-                            {`${row["sigma_factor"]}`}
-                        </p>
+                        <p>Sample status: {`${row["status"]}`}</p>
+                        <p>Compatible RFC standards: {`${row["standards"]}`}</p>
+                        <p>Length: {`${row["length"]}`}</p>
                         <p>
                             <strong> Experience: </strong>
-                            {isNaN(row["experience"])
-                                ? `${row["experience"]}`
-                                : `${row["experience"]} Star!!`}
+                            {isNaN(row["rating"])
+                                ? `${row["rating"]}`
+                                : `${row["rating"]} Star!!`}
                         </p>
+                        <p>Forward Efficiency: {`${row["forward"]}`}</p>
+                        <p>Reverse Efficiency: {`${row["reverse"]}`}</p>
                         {row["sequence"] && (
                             <p className="sequence">
                                 <strong>Sequence: </strong>{" "}
@@ -303,10 +308,8 @@ class Promoter extends Component {
                         <Button
                             variant="success"
                             onClick={this.handleClickContinue}
-                            disabled={
-                                selectedPromoter === "" && typedPromoter === ""
-                            }>
-                            Select promoter
+                            disabled={selectedTerminator === ""}>
+                            Select Terminator
                         </Button>
                     </div>
                 </div>
@@ -315,16 +318,19 @@ class Promoter extends Component {
             onExpand: this.handleOnExpand
         }
         return (
-            <Container className="mb-5">
+            <Container>
                 <InfoBar
-                    statusPosition={"Promoter"}
+                    statusPosition={"Terminator"}
                     chassis={chassis}
+                    rbs={rbs}
                     rfc={rfc}
+                    promoter={promoter}
+                    sequence={sequence}
                 />
                 <Row className="my-3">
                     <Col className="d-flex justify-content-between">
                         <Button onClick={this.handClickBack}>
-                            Go back to Chassis & RFC selection
+                            Go back to Coding Sequence selection
                         </Button>
                         <Button variant="warning" onClick={this.toggleLibrary}>
                             {inLibrary && "Insert your own sequence"}
@@ -334,7 +340,7 @@ class Promoter extends Component {
                 </Row>
                 {inLibrary && (
                     <React.Fragment>
-                        <Row>
+                        <Row className="mb-4">
                             <ColorCodes />
                             <SampleStockStatus
                                 val={status}
@@ -364,7 +370,7 @@ class Promoter extends Component {
                 )}
                 {!inLibrary && (
                     <InputSequence
-                        val={typedPromoter}
+                        val={typedTerminator}
                         handler={this.handleTypeSequence}
                     />
                 )}
@@ -376,4 +382,4 @@ class Promoter extends Component {
 const mapStateToProps = ({ builder }) => ({
     builder
 })
-export default connect(mapStateToProps)(Promoter)
+export default connect(mapStateToProps)(Terminator)
