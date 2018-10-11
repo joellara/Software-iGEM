@@ -121,7 +121,9 @@ class ResultBB extends Component {
                 />
                 <Row>
                     <Col>
-                        {this.state.biobrick && <p>{this.state.biobrick}</p>}
+                        {this.state.biobrick && (
+                            <p className="sequence">{this.state.biobrick}</p>
+                        )}
                     </Col>
                 </Row>
             </Container>
