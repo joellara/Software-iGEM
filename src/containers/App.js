@@ -1,25 +1,13 @@
-/* eslint-disable no-undef */
-
-import React, { Component } from "react";
-import {SignUp} from "./SignUp"
-import firebase from 'firebase';
+import React, { Component } from "react"
 
 class App extends Component {
-  constructor(props){
-    super(props);
-    firebase.auth().onAuthStateChanged(function(user) {
-      if (user) {
-        // User is signed in.
-      } else {
-        // No user is signed in.
-      }
-    });
-  }
+    constructor(props) {
+        super(props)
+    }
 
-  render() {
-    //return <h1> This is home </h1>;
-    return <SignUp/>;
-  }
+    render() {
+        return <h1> This is home </h1>
+    }
 }
 
-export default App;
+export default App

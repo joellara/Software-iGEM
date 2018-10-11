@@ -1,66 +1,51 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { Provider } from "react-redux";
-import { Route, NavLink } from "react-router-dom";
-import App from "./App";
-import '../App.css' 
-import CellCount from "./CellCount";
+import React from "react"
+import PropTypes from "prop-types"
+import { Provider } from "react-redux"
+import { Route, NavLink, Switch } from "react-router-dom"
+import Navbar from "react-bootstrap/lib/Navbar"
+import Nav from "react-bootstrap/lib/Nav"
+import App from "./App"
+import CellCount from "./CellCount"
 import ActivityLog from "./ActivityLog"
-import NewProyect from './NewProyect';
+import BiobrickBuilder from "./BiobrickBuilder"
+import "../css/body.css"
 
 const Root = ({ store }) => (
-  <Provider store={store}>
-    <div>
-      <nav className="navbar navbar-expand-lg navbar-light bg-light">
-        <NavLink className="navbar-brand" to="/">
-          iGEM
-        </NavLink>
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-toggle="collapse"
-          data-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon" />
-        </button>
-
-        <div className="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul className="navbar-nav mr-auto">
-            <li className="nav-item">
-              <NavLink className="nav-link" exact to="/">
-                Home
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink className="nav-link" to="/cellcount">
-                Cell Count App
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink className="nav-link" to="/activitylog">
-                Activity Log
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink className="nav-link newProyectNavBar" to="/newProyect">
-                +
-              </NavLink>
-            </li>
-          </ul>
-        </div>
-      </nav>
-      <Route exact path="/" component={App} />
-      <Route path="/cellcount" component={CellCount} />
-      <Route path="/activitylog" component={ActivityLog} />
-      <Route path="/newProyect" component={NewProyect} />
-    </div>
-  </Provider>
-);
+    <Provider store={store}>
+        <React.Fragment>
+            <Navbar fixed="top" bg="dark" expand="lg" variant="dark">
+                <Navbar.Brand as={NavLink} exact to="/">
+                    iGEM
+                </Navbar.Brand>
+                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                <Navbar.Collapse id="basic-navbar-nav">
+                    <Nav className="mr-auto">
+                        <Nav.Link as={NavLink} to="/">
+                            Home
+                        </Nav.Link>
+                        <Nav.Link as={NavLink} to="/cellcount">
+                            Cell Count
+                        </Nav.Link>
+                        <Nav.Link as={NavLink} to="/activitylog">
+                            Activity
+                        </Nav.Link>
+                        <Nav.Link as={NavLink} to="/bbbuilder">
+                            Biobrick Builder
+                        </Nav.Link>
+                    </Nav>
+                </Navbar.Collapse>
+            </Navbar>
+            <Switch>
+                <Route exact path="/" component={App} />
+                <Route path="/cellcount" component={CellCount} />
+                <Route path="/activitylog" component={ActivityLog} />
+                <Route path="/bbbuilder" component={BiobrickBuilder} />
+            </Switch>
+        </React.Fragment>
+    </Provider>
+)
 
 Root.propTypes = {
-  store: PropTypes.object.isRequired
-};
-export default Root;
+    store: PropTypes.object.isRequired
+}
+export default Root

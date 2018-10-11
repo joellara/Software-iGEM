@@ -1,0 +1,7 @@
+.pagination.react-bootstrap-table-page-btns-ul {
+    justify-content: flex-end;
+}
+.react-bs-table-sizePerPage-dropdown.dropdown {
+    display: block;
+    width: 15%;
+}
