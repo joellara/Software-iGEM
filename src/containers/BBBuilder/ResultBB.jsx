@@ -14,10 +14,10 @@ class ResultBB extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            promoter: props.builder.promoter,
-            rbs: props.builder.rbs,
-            sequence: props.builder.sequence,
-            terminator: props.builder.terminator,
+            promoter: props.builder.promoter.name,
+            rbs: props.builder.rbs.name,
+            sequence: props.builder.sequence.name,
+            terminator: props.builder.terminator.name,
             biobrick: ""
         }
     }
@@ -28,8 +28,6 @@ class ResultBB extends Component {
             this.state.promoter[0] !== "B" &&
             this.state.terminator[0] !== "B"
         ) {
-            console.log("Time to create biobrick")
-
             const { rfc } = this.props.builder
             const biobrick = builderActions.createBioBrick(
                 rfc,
@@ -45,8 +43,8 @@ class ResultBB extends Component {
     }
     componentDidMount() {
         const { promoter, rbs, terminator } = this.props.builder
-        if (promoter[0] === "B") {
-            builderActions.getSequence(promoter).then(response => {
+        if (promoter.name[0] === "B") {
+            builderActions.getSequence(promoter.name).then(response => {
                 this.setStateSequence(
                     response.data[Object.keys(response.data)[0]].sequence
                         .replace(/\s/g, "")
@@ -55,8 +53,8 @@ class ResultBB extends Component {
                 )
             })
         }
-        if (rbs[0] === "B") {
-            builderActions.getSequence(rbs).then(response => {
+        if (rbs.name[0] === "B") {
+            builderActions.getSequence(rbs.name).then(response => {
                 this.setStateSequence(
                     response.data[Object.keys(response.data)[0]].sequence
                         .replace(/\s/g, "")
@@ -65,8 +63,8 @@ class ResultBB extends Component {
                 )
             })
         }
-        if (terminator[0] === "B") {
-            builderActions.getSequence(terminator).then(response => {
+        if (terminator.name[0] === "B") {
+            builderActions.getSequence(terminator.name).then(response => {
                 this.setStateSequence(
                     response.data[Object.keys(response.data)[0]].sequence
                         .replace(/\s/g, "")
@@ -88,9 +86,9 @@ class ResultBB extends Component {
     }
     shouldComponentUpdate(nextProps, nextState) {
         if (
-            nextState.rbs[0] === "B" ||
-            nextState.promoter[0] === "B" ||
-            nextState.terminator[0] === "B"
+            (nextState.rbs.name && nextState.rbs.name[0] === "B") ||
+            (nextState.promoter.name && nextState.promoter.name[0] === "B") ||
+            (nextState.terminator.name && nextState.terminator.name[0] === "B")
         )
             return false
         return true
@@ -114,10 +112,10 @@ class ResultBB extends Component {
                     statusPosition={"Result"}
                     chassis={chassis}
                     rfc={rfc}
-                    promoter={promoter}
-                    rbs={rbs}
-                    sequence={sequence}
-                    terminator={terminator}
+                    promoter={promoter.name}
+                    rbs={rbs.name}
+                    sequence={sequence.name}
+                    terminator={terminator.name}
                 />
                 <Row>
                     <Col>

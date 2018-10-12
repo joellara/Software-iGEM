@@ -122,7 +122,7 @@ class Promoter extends Component {
     }
     handleSelectStatus = e => {
         const dataStatus = [ALL, IN_STOCK, NOT_IN_STOCK, COMPLICATED]
-        let { rfc, chassis } = this.props.builder
+        let { rfc } = this.props.builder
         rfc = rfc.replace(/\s/g, "")
         this.setState({
             filteredPayload: this.state.payload.filter(val => {
@@ -141,7 +141,7 @@ class Promoter extends Component {
     handleOnExpand = (row, isExpand, rowIndex, e) => {
         if (isExpand) {
             this.setState(() => ({
-                selectedPromoter: row.name,
+                selectedPromoter: row,
                 expanded: [row.name]
             }))
         } else {

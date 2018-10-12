@@ -229,7 +229,7 @@ class RBS extends Component {
     handleOnExpand = (row, isExpand, rowIndex, e) => {
         if (isExpand) {
             this.setState(() => ({
-                selectedRBS: row.name,
+                selectedRBS: row,
                 expanded: [row.name]
             }))
         } else {
@@ -335,7 +335,7 @@ class RBS extends Component {
                     statusPosition={"RBS"}
                     chassis={chassis}
                     rfc={rfc}
-                    promoter={promoter}
+                    promoter={promoter.name}
                 />
                 <Row className="my-3">
                     <Col className="d-flex justify-content-between">

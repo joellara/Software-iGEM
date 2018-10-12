@@ -214,7 +214,7 @@ class Terminator extends Component {
     handleOnExpand = (row, isExpand, rowIndex, e) => {
         if (isExpand) {
             this.setState(() => ({
-                selectedTerminator: row.name,
+                selectedTerminator: row,
                 expanded: [row.name]
             }))
         } else {
@@ -322,9 +322,9 @@ class Terminator extends Component {
                 <InfoBar
                     statusPosition={"Terminator"}
                     chassis={chassis}
-                    rbs={rbs}
                     rfc={rfc}
-                    promoter={promoter}
+                    rbs={rbs.name}
+                    promoter={promoter.name}
                     sequence={sequence}
                 />
                 <Row className="my-3">

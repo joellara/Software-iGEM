@@ -47,8 +47,8 @@ class CodingSequence extends Component {
                     statusPosition={"Coding Sequence"}
                     chassis={chassis}
                     rfc={rfc}
-                    promoter={promoter}
-                    rbs={rbs}
+                    promoter={promoter.name}
+                    rbs={rbs.name}
                 />
                 <Row className="my-3">
                     <Col className="d-flex justify-content-between">
