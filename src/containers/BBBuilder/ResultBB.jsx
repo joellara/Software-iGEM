@@ -118,7 +118,7 @@ class ResultBB extends Component {
         if (!rbs) return <Redirect to="/bbbuilder/rbs" />
         if (!sequence) return <Redirect to="/bbbuilder/codingsequence" />
         return (
-            <Container>
+            <Container className="mb-5">
                 <InfoBar
                     statusPosition={"Result"}
                     chassis={chassis}

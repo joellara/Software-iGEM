@@ -353,7 +353,7 @@ class RBS extends Component {
                 </Row>
                 {inLibrary && (
                     <React.Fragment>
-                        <Row className="mb-4">
+                        <Row className="mb-2">
                             <ColorCodes />
                             <Col xs="12" md="6">
                                 <h5 className="mr-3 d-inline-block">

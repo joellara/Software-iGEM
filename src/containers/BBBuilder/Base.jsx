@@ -50,7 +50,7 @@ export class Base extends Component {
             builder: { rfc, chassis }
         } = this.props
         return (
-            <Container id="initialSelection">
+            <Container id="initialSelection" className="mb-3">
                 <Row>
                     <CardDeck style={{ width: "100%" }} className="mb-3">
                         <Col md="6">

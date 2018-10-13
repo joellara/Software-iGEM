@@ -73,7 +73,9 @@ export default class Part extends Component {
                                                             val[0].slice(1) +
                                                             ": "}
                                                     </strong>
-                                                    {val[1]}
+                                                    {val[0] === "standards"
+                                                        ? val[1].join(", ")
+                                                        : val[1]}
                                                 </p>
                                             )
                                         })}

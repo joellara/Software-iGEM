@@ -330,7 +330,7 @@ class Terminator extends Component {
                     promoter={promoter.name ? promoter.name : promoter}
                     sequence={sequence}
                 />
-                <Row className="my-3">
+                <Row className="mb-2">
                     <Col className="d-flex justify-content-between">
                         <Button onClick={this.handClickBack}>
                             Go back to Coding Sequence selection
