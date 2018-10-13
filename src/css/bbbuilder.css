@@ -47,7 +47,6 @@
 .lead strong {
     font-weight: 600;
     letter-spacing: 1px;
-    font-size: 1.25em;
 }
 .react-bootstrap-table .table thead tr th {
     vertical-align: middle !important;
@@ -68,4 +67,8 @@
 }
 .sequence {
     word-break: break-all;
+}
+.part-div button,
+.part-div a {
+    margin-right: 1rem;
 }

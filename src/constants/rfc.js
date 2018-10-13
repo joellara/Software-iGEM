@@ -26,10 +26,7 @@ export const RFC10 = {
         RESTRICTION_SITES["XbaI"] +
         "G",
     prefix2:
-        RESTRICTION_SITES["EcoRI"] +
-        RESTRICTION_SITES["NotI"] +
-        "T" +
-        RESTRICTION_SITES["TCTAG"],
+        RESTRICTION_SITES["EcoRI"] + RESTRICTION_SITES["NotI"] + "T" + "TCTAG",
     suffix:
         "T" +
         RESTRICTION_SITES["SpeI"] +

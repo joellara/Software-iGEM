@@ -3,6 +3,9 @@ import Row from "react-bootstrap/lib/Row"
 import Col from "react-bootstrap/lib/Col"
 import InputGroup from "react-bootstrap/lib/InputGroup"
 import FormControl from "react-bootstrap/lib/FormControl"
+function normalizeText(event) {
+    return event.target.value.replace(/[^ACGTacgt]/g, "").toUpperCase()
+}
 export default ({ val, handler }) => {
     return (
         <Row>
@@ -16,7 +19,9 @@ export default ({ val, handler }) => {
                     </InputGroup.Prepend>
                     <FormControl
                         value={val}
-                        onChange={handler}
+                        onChange={e => {
+                            handler(normalizeText(e))
+                        }}
                         placeholder="Sequence"
                         aria-label="sequence"
                         aria-describedby="basic-sequence"

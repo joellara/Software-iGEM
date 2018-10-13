@@ -4,20 +4,24 @@ import { Redirect } from "react-router-dom"
 import { builderActions } from "../../actions"
 //Components
 import InfoBar from "../../components/BBBuilder/InfoBar"
-
+import Part from "../../components/BBBuilder/Part"
 //Style
 import Container from "react-bootstrap/lib/Container"
-import Row from "react-bootstrap/lib/Row"
-import Col from "react-bootstrap/lib/Col"
 
 class ResultBB extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            promoter: props.builder.promoter.name,
-            rbs: props.builder.rbs.name,
-            sequence: props.builder.sequence.name,
-            terminator: props.builder.terminator.name,
+            promoter: props.builder.promoter.name
+                ? props.builder.promoter.name
+                : props.builder.promoter,
+            rbs: props.builder.rbs.name
+                ? props.builder.rbs.name
+                : props.builder.rbs,
+            sequence: props.builder.sequence,
+            terminator: props.builder.terminator.name
+                ? props.builder.terminator.name
+                : props.builder.terminator,
             biobrick: ""
         }
     }
@@ -43,7 +47,9 @@ class ResultBB extends Component {
     }
     componentDidMount() {
         const { promoter, rbs, terminator } = this.props.builder
-        if (promoter.name[0] === "B") {
+        var atLeastOneBB = false
+        if (promoter.name && promoter.name[0] === "B") {
+            atLeastOneBB = true
             builderActions.getSequence(promoter.name).then(response => {
                 this.setStateSequence(
                     response.data[Object.keys(response.data)[0]].sequence
@@ -53,7 +59,8 @@ class ResultBB extends Component {
                 )
             })
         }
-        if (rbs.name[0] === "B") {
+        if (rbs.name && rbs.name[0] === "B") {
+            atLeastOneBB = true
             builderActions.getSequence(rbs.name).then(response => {
                 this.setStateSequence(
                     response.data[Object.keys(response.data)[0]].sequence
@@ -63,7 +70,8 @@ class ResultBB extends Component {
                 )
             })
         }
-        if (terminator.name[0] === "B") {
+        if (terminator.name && terminator.name[0] === "B") {
+            atLeastOneBB = true
             builderActions.getSequence(terminator.name).then(response => {
                 this.setStateSequence(
                     response.data[Object.keys(response.data)[0]].sequence
@@ -72,6 +80,9 @@ class ResultBB extends Component {
                     "terminator"
                 )
             })
+        }
+        if (!atLeastOneBB) {
+            this.createSequence()
         }
     }
     setStateSequence = (seq, name) => {
@@ -112,18 +123,34 @@ class ResultBB extends Component {
                     statusPosition={"Result"}
                     chassis={chassis}
                     rfc={rfc}
-                    promoter={promoter.name}
-                    rbs={rbs.name}
-                    sequence={sequence.name}
-                    terminator={terminator.name}
+                    rbs={rbs.name ? rbs.name : rbs}
+                    promoter={promoter.name ? promoter.name : promoter}
+                    terminator={terminator.name ? terminator.name : terminator}
+                    sequence={sequence}
                 />
-                <Row>
-                    <Col>
-                        {this.state.biobrick && (
-                            <p className="sequence">{this.state.biobrick}</p>
-                        )}
-                    </Col>
-                </Row>
+                <Part
+                    data={promoter.name ? promoter : null}
+                    sequence={this.state.promoter}
+                    text={"Promoter"}
+                    className="mb-2"
+                />
+                <Part
+                    data={rbs.name ? rbs : null}
+                    sequence={this.state.rbs}
+                    className="mb-2"
+                    text={"RBS"}
+                />
+                <Part
+                    sequence={this.state.sequence}
+                    className="mb-2"
+                    text={"Coding Sequence"}
+                />
+                <Part
+                    data={terminator.name ? terminator : null}
+                    sequence={this.state.terminator}
+                    className="mb-2"
+                    text={"Terminator"}
+                />
             </Container>
         )
     }

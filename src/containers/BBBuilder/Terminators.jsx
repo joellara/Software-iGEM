@@ -95,8 +95,9 @@ const columns = [
             return (
                 <Button
                     href={`http://parts.igem.org/Part:${row["name"]}`}
-                    target="_blank">
-                    Link
+                    target="_blank"
+                    variant="info">
+                    Link to iGEM
                 </Button>
             )
         },
@@ -137,8 +138,8 @@ class Terminator extends Component {
         this.toggleLibrary = this.toggleLibrary.bind(this)
         this.handleTypeSequence = this.handleTypeSequence.bind(this)
     }
-    handleTypeSequence = event => {
-        this.setState({ typedTerminator: event.target.value })
+    handleTypeSequence = value => {
+        this.setState({ typedTerminator: value })
     }
     handClickBack = () => {
         const { history } = this.props
@@ -323,8 +324,8 @@ class Terminator extends Component {
                     statusPosition={"Terminator"}
                     chassis={chassis}
                     rfc={rfc}
-                    rbs={rbs.name}
-                    promoter={promoter.name}
+                    rbs={rbs.name ? rbs.name : rbs}
+                    promoter={promoter.name ? promoter.name : promoter}
                     sequence={sequence}
                 />
                 <Row className="my-3">
@@ -369,10 +370,19 @@ class Terminator extends Component {
                     </React.Fragment>
                 )}
                 {!inLibrary && (
-                    <InputSequence
-                        val={typedTerminator}
-                        handler={this.handleTypeSequence}
-                    />
+                    <React.Fragment>
+                        <InputSequence
+                            val={typedTerminator}
+                            handler={this.handleTypeSequence}
+                        />
+                        <Button
+                            variant="success"
+                            className="float-right"
+                            onClick={this.handleClickContinue}
+                            disabled={typedTerminator === ""}>
+                            Select Terminator
+                        </Button>
+                    </React.Fragment>
                 )}
             </Container>
         )

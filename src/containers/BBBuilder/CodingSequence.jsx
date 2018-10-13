@@ -32,8 +32,8 @@ class CodingSequence extends Component {
         const { history } = this.props
         history.push("/bbbuilder/rbs")
     }
-    handleTypeSequence = event => {
-        this.setState({ sequence: event.target.value })
+    handleTypeSequence = value => {
+        this.setState({ sequence: value })
     }
     render() {
         const { rfc, chassis, promoter, rbs } = this.props.builder
@@ -47,8 +47,8 @@ class CodingSequence extends Component {
                     statusPosition={"Coding Sequence"}
                     chassis={chassis}
                     rfc={rfc}
-                    promoter={promoter.name}
-                    rbs={rbs.name}
+                    promoter={promoter.name ? promoter.name : promoter}
+                    rbs={rbs.name ? rbs.name : rbs}
                 />
                 <Row className="my-3">
                     <Col className="d-flex justify-content-between">

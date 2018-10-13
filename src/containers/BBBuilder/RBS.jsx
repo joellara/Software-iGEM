@@ -93,8 +93,9 @@ const columns = [
             return (
                 <Button
                     href={`http://parts.igem.org/Part:${row["name"]}`}
-                    target="_blank">
-                    Link
+                    target="_blank"
+                    variant="info">
+                    Link to iGEM
                 </Button>
             )
         },
@@ -137,8 +138,8 @@ class RBS extends Component {
         this.toggleLibrary = this.toggleLibrary.bind(this)
         this.handleTypeSequence = this.handleTypeSequence.bind(this)
     }
-    handleTypeSequence = event => {
-        this.setState({ typedRBS: event.target.value })
+    handleTypeSequence = value => {
+        this.setState({ typedRBS: value })
     }
     handClickBack = () => {
         const { history } = this.props
@@ -335,7 +336,7 @@ class RBS extends Component {
                     statusPosition={"RBS"}
                     chassis={chassis}
                     rfc={rfc}
-                    promoter={promoter.name}
+                    promoter={promoter.name ? promoter.name : promoter}
                 />
                 <Row className="my-3">
                     <Col className="d-flex justify-content-between">
@@ -404,10 +405,19 @@ class RBS extends Component {
                     </React.Fragment>
                 )}
                 {!inLibrary && (
-                    <InputSequence
-                        val={typedRBS}
-                        handler={this.handleTypeSequence}
-                    />
+                    <React.Fragment>
+                        <InputSequence
+                            val={typedRBS}
+                            handler={this.handleTypeSequence}
+                        />
+                        <Button
+                            variant="success"
+                            className="float-right"
+                            onClick={this.handleClickContinue}
+                            disabled={typedRBS === ""}>
+                            Select RBS
+                        </Button>
+                    </React.Fragment>
                 )}
             </Container>
         )

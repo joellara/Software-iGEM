@@ -17,50 +17,52 @@ export default ({
                 <h1>{statusPosition}</h1>
             </Col>
             <Col xs="6" md="4">
-                <h4>
+                <p className="lead">
                     <strong>Chassis: </strong> {chassis}
-                </h4>
+                </p>
             </Col>
             <Col xs="6" md="4">
-                <h4>
+                <p className="lead">
                     <strong>RFC: </strong>
                     {rfc}
-                </h4>
+                </p>
             </Col>
             {promoter && (
                 <Col xs="6" md="4">
-                    <h4>
+                    <p className="lead">
                         <strong>Promoter: </strong>
                         {promoter.length > 15
                             ? promoter.substring(0, 15) + "..."
                             : promoter}
-                    </h4>
+                    </p>
                 </Col>
             )}
             {rbs && (
                 <Col xs="6" md="4">
-                    <h4>
+                    <p className="lead">
                         <strong>RBS: </strong>
                         {rbs.length > 15 ? rbs.substring(0, 15) + "..." : rbs}
-                    </h4>
+                    </p>
                 </Col>
             )}
             {sequence && (
                 <Col xs="6" md="4">
-                    <h4>
+                    <p className="lead">
                         <strong>Sequence: </strong>
                         {sequence.length > 15
                             ? sequence.substring(0, 15) + "..."
                             : sequence}
-                    </h4>
+                    </p>
                 </Col>
             )}
             {terminator && (
                 <Col xs="6" md="4">
-                    <h4>
+                    <p className="lead">
                         <strong>Terminator: </strong>
-                        {terminator}
-                    </h4>
+                        {terminator.length > 15
+                            ? terminator.substring(0, 15) + "..."
+                            : terminator}
+                    </p>
                 </Col>
             )}
         </Row>

@@ -67,8 +67,8 @@ class Promoter extends Component {
         this.toggleLibrary = this.toggleLibrary.bind(this)
         this.handleTypeSequence = this.handleTypeSequence.bind(this)
     }
-    handleTypeSequence = event => {
-        this.setState({ typedPromoter: event.target.value })
+    handleTypeSequence = value => {
+        this.setState({ typedPromoter: value })
     }
     handClickBack = () => {
         const { history } = this.props
@@ -177,7 +177,7 @@ class Promoter extends Component {
     }
     componentDidMount() {
         let {
-            builder: { rfc, chassis }
+            builder: { rfc }
         } = this.props
         rfc = rfc.replace(/\s/g, "")
         promotersRef.on("value", snapshot => {
@@ -252,7 +252,8 @@ class Promoter extends Component {
                     return (
                         <Button
                             href={`http://parts.igem.org/Part:${row["name"]}`}
-                            target="_blank">
+                            target="_blank"
+                            variant="info">
                             Link to iGEM
                         </Button>
                     )
@@ -363,10 +364,19 @@ class Promoter extends Component {
                     </React.Fragment>
                 )}
                 {!inLibrary && (
-                    <InputSequence
-                        val={typedPromoter}
-                        handler={this.handleTypeSequence}
-                    />
+                    <React.Fragment>
+                        <InputSequence
+                            val={typedPromoter}
+                            handler={this.handleTypeSequence}
+                        />
+                        <Button
+                            variant="success"
+                            className="float-right"
+                            onClick={this.handleClickContinue}
+                            disabled={typedPromoter === ""}>
+                            Select promoter
+                        </Button>
+                    </React.Fragment>
                 )}
             </Container>
         )
