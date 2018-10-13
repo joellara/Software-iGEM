@@ -172,7 +172,9 @@ class Terminator extends Component {
                         if (val["name"] === row.name) {
                             val["sequence"] = response.data[
                                 Object.keys(response.data)[0]
-                            ].sequence.replace(/\s/g, "")
+                            ].sequence
+                                .replace(/\s/g, "")
+                                .toUpperCase()
                         }
                         return val
                     })

@@ -4,7 +4,7 @@ import { Redirect } from "react-router-dom"
 //Components
 import RadioSelectionGroup from "../../components/RadioSelectionGroup"
 //Redux
-import { RFCs, Chassis } from "../../constants"
+import { RFCs, CHASSIS } from "../../constants"
 import { builderActions } from "../../actions"
 //Style
 import Container from "react-bootstrap/lib/Container"
@@ -74,7 +74,7 @@ export class Base extends Component {
                                     <Card.Title>Chassis</Card.Title>
                                     <Card.Text as="div">
                                         <RadioSelectionGroup
-                                            listData={Chassis}
+                                            listData={CHASSIS}
                                             stateData={chassis}
                                             _function={this.handleClickChassis}
                                             _name="Chassis"

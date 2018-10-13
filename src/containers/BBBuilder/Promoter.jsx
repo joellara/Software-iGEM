@@ -3,7 +3,7 @@ import { connect } from "react-redux"
 import { Redirect } from "react-router-dom"
 import { promotersRef } from "../../config/firebase"
 import { builderActions } from "../../actions"
-
+import { CHASSIS } from "../../constants"
 //Components
 import ColorCodes from "../../components/BBBuilder/ColorCodes"
 import InfoBar from "../../components/BBBuilder/InfoBar"
@@ -24,6 +24,8 @@ import Container from "react-bootstrap/lib/Container"
 import Row from "react-bootstrap/lib/Row"
 import Col from "react-bootstrap/lib/Col"
 import Button from "react-bootstrap/lib/Button"
+import DropdownButton from "react-bootstrap/lib/DropdownButton"
+import Dropdown from "react-bootstrap/lib/Dropdown"
 
 const selectOptions = {
     Inducible: "Inducible",
@@ -53,7 +55,8 @@ class Promoter extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            status: "",
+            status: ALL,
+            chassis: CHASSIS.ALL,
             payload: [],
             filteredPayload: [],
             typedPromoter: "",
@@ -83,7 +86,9 @@ class Promoter extends Component {
                         if (val["name"] === row.name) {
                             val["sequence"] = response.data[
                                 Object.keys(response.data)[0]
-                            ].sequence.replace(/\s/g, "")
+                            ].sequence
+                                .replace(/\s/g, "")
+                                .toUpperCase()
                         }
                         return val
                     })
@@ -126,7 +131,16 @@ class Promoter extends Component {
         rfc = rfc.replace(/\s/g, "")
         this.setState({
             filteredPayload: this.state.payload.filter(val => {
-                if (dataStatus[e] !== ALL) {
+                if (
+                    dataStatus[e] !== ALL &&
+                    this.state.chassis !== CHASSIS.ALL
+                ) {
+                    return (
+                        val["status"] === dataStatus[e] &&
+                        val["chassis"] === this.state.chassis &&
+                        val["standards"].indexOf(rfc) > -1
+                    )
+                } else if (dataStatus[e] !== ALL) {
                     return (
                         val["status"] === dataStatus[e] &&
                         val["standards"].indexOf(rfc) > -1
@@ -188,6 +202,29 @@ class Promoter extends Component {
                     return val["standards"].indexOf(rfc) > -1
                 })
             }))
+        })
+    }
+    handleSelectChassis = e => {
+        let { rfc } = this.props.builder
+        rfc = rfc.replace(/\s/g, "")
+        this.setState({
+            filteredPayload: this.state.payload.filter(val => {
+                if (CHASSIS[e] !== ALL && this.state.status !== ALL) {
+                    return (
+                        val["status"] === this.state.status &&
+                        val["chassis"] === CHASSIS[e] &&
+                        val["standards"].indexOf(rfc) > -1
+                    )
+                } else if (CHASSIS[e] !== ALL) {
+                    return (
+                        val["chassis"] === CHASSIS[e] &&
+                        val["standards"].indexOf(rfc) > -1
+                    )
+                } else {
+                    return val["standards"].indexOf(rfc) > -1
+                }
+            }),
+            chassis: CHASSIS[e]
         })
     }
     render() {
@@ -335,12 +372,33 @@ class Promoter extends Component {
                 </Row>
                 {inLibrary && (
                     <React.Fragment>
-                        <Row>
-                            <ColorCodes />
+                        <Row className="mb-5">
+                            <Col xs="12" md="6">
+                                <h5 className="mr-3 d-inline-block">
+                                    <strong>Organism: </strong>
+                                </h5>
+                                <DropdownButton
+                                    id="dropdown-status-type-rbs"
+                                    title={this.state.chassis || "All"}
+                                    className="mr-5 d-inline-block">
+                                    {CHASSIS.map((chassis, index) => {
+                                        return (
+                                            <Dropdown.Item
+                                                eventKey={index}
+                                                onSelect={
+                                                    this.handleSelectChassis
+                                                }>
+                                                {chassis}
+                                            </Dropdown.Item>
+                                        )
+                                    })}
+                                </DropdownButton>
+                            </Col>
                             <SampleStockStatus
                                 val={status}
                                 handler={this.handleSelectStatus}
                             />
+                            <ColorCodes />
                         </Row>
                         <Row>
                             <Col xs="12">

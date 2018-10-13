@@ -2,7 +2,7 @@ import React from "react"
 import Col from "react-bootstrap/lib/Col"
 const ColorCodes = () => {
     return (
-        <Col xs="12" md="8" className="color-codes">
+        <Col xs="12" className="color-codes">
             <p className="lead">
                 <strong>Color codes:</strong>
             </p>
