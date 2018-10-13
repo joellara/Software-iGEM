@@ -8,7 +8,7 @@ import {
 import firebase from 'firebase';
 import {LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Line } from 'recharts'
 
-const id = '8928292893';
+const id = '15375126592990222';
 
 class CellCount extends Component {
   constructor(props) {
@@ -106,24 +106,24 @@ class CellCount extends Component {
 
   render() {
     const years = this.state.data ? Object.keys(this.state.data).map((el, idx) => (
-      <Col sm={2}>
-        <Button onClick={()=>this.selectYear(el)} key={idx} className="column-scroll center" md={3}>
+      <Col sm={1}>
+        <Button  style={{width:'100%'}} onClick={()=>this.selectYear(el)} key={idx} className="" md={3}>
           {el}
         </Button>
       </Col>
     )):null;
 
     const months = Object.keys(this.state.yearData).map((el, idx) => (
-      <Col sm={2}>
-      <Button onClick={()=>this.selectMonth(el)} key={idx} className="column-scroll center" md={3}>
+      <Col sm={1}>
+      <Button  style={{width:'100%'}} onClick={()=>this.selectMonth(el)} key={idx} className="" md={3}>
         {el}
       </Button>
       </Col>
     ));
 
     const days = Object.keys(this.state.monthData).map((el, idx) => (
-      <Col sm={2}>
-      <Button onClick={()=>this.selectDay(el)} key={idx} className="column-scroll center" md={3}>
+      <Col sm={1}>
+      <Button  style={{width:'100%'}} onClick={()=>this.selectDay(el)} key={idx} className="" md={3}>
         {el}
       </Button>
       </Col>
@@ -154,7 +154,7 @@ class CellCount extends Component {
         </Col>
       </Row>
       <Row style={{margin:'0'}}>
-        <Col sm ={2}>
+        <Col style={{marginTop:'20px'}} sm ={2}>
           <h5>Year:</h5>
         </Col>
       </Row>
@@ -163,7 +163,7 @@ class CellCount extends Component {
       </Row>
 
       {months.length>0?<Row style={{margin:'0'}}>
-        <Col sm ={2}>
+        <Col style={{marginTop:'20px'}} sm ={2}>
           <h5>Month:</h5>
         </Col>
       </Row>:null}
@@ -172,7 +172,7 @@ class CellCount extends Component {
       </Row>
 
       {days.length>0?<Row style={{margin:'0'}}>
-        <Col sm ={2}>
+        <Col style={{marginTop:'20px'}} sm ={2}>
           <h5>Days:</h5>
         </Col>
       </Row>:null}

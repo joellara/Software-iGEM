@@ -2,8 +2,10 @@ import React, { Component } from "react";
 import { Row, Col } from "react-bootstrap";
 import firebase from 'firebase';
 import '../App.css'
+import { loginActions } from "../actions";
+import { connect } from "react-redux";
 
-export class SignUp extends Component {
+class SignUp extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -21,6 +23,7 @@ export class SignUp extends Component {
 
   // Sign Up
   doCreateUserWithEmailAndPassword() {
+    debugger;
     const _this = this;
     const { email, password } = this.state;
     firebase.auth().createUserWithEmailAndPassword(email, password).then(function(auth){
@@ -44,6 +47,8 @@ export class SignUp extends Component {
   }
 
   doLoginWithEmailAndPassword(){
+    //TODO: guardar en el app state
+    debugger;
     const { email, password } = this.state;
     firebase.auth().signInWithEmailAndPassword(email, password).then(function(auth){
       debugger;
@@ -56,6 +61,9 @@ export class SignUp extends Component {
         if(emailVerified){
           //TODO: switch to home
         }
+        debugger;
+        const { dispatch } = this.props
+        dispatch(loginActions.login(user.uid));
       }
 
 
@@ -65,12 +73,10 @@ export class SignUp extends Component {
       var errorMessage = error.message;
       // ...
     });
-
-
-
   }
 
   handleChange(evt) {
+    debugger;
     this.setState({ [evt.target.name]: evt.target.value });
   }
 
@@ -155,3 +161,7 @@ export class SignUp extends Component {
   }
 }
 
+const mapStateToProps = ({ login }) => ({
+  login
+})
+export default connect(mapStateToProps)(SignUp)

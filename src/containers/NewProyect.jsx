@@ -18,7 +18,7 @@ export default class NewProyect extends Component {
   createProyect() {
     let _this = this;
     let user = firebase.auth().currentUser;
-    firebase.database().ref('users/'+user.uid+'proyects').update({
+    firebase.database().ref('users/'+user.uid+'/proyects').update({
       [_this.state.code]:'active'
     });
   }
