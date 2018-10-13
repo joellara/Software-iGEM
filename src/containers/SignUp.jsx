@@ -1,167 +1,137 @@
-import React, { Component } from "react";
-import { Row, Col } from "react-bootstrap";
-import firebase from 'firebase';
-import '../App.css'
-import { loginActions } from "../actions";
-import { connect } from "react-redux";
+import React, { Component } from "react"
+import { connect } from "react-redux"
+import firebase from "firebase"
+import { authActions } from "../actions"
+
+import Container from "react-bootstrap/lib/Container"
+import Row from "react-bootstrap/lib/Row"
+import Col from "react-bootstrap/lib/Col"
+import Form from "react-bootstrap/lib/Form"
+import Button from "react-bootstrap/lib/Button"
+
+import { NavLink } from "react-router-dom"
+import { Redirect } from "react-router"
 
 class SignUp extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      email: "",
-      password: "",
-      name: "",
-      error: false,
-      errorMessage: ""
-    };
-    this.handleChange = this.handleChange.bind(this);
-    this.doCreateUserWithEmailAndPassword = this.doCreateUserWithEmailAndPassword.bind(this);
-    this.doLoginWithEmailAndPassword = this.doLoginWithEmailAndPassword.bind(this);
-
-  }
-
-  // Sign Up
-  doCreateUserWithEmailAndPassword() {
-    debugger;
-    const _this = this;
-    const { email, password } = this.state;
-    firebase.auth().createUserWithEmailAndPassword(email, password).then(function(auth){
-      debugger;
-      var user = auth.user;
-
-      firebase.database().ref('users/'+user.uid).update({
-        name:_this.state.name,
-        email:_this.state.email,
-      });
-
-      user.sendEmailVerification().then(function() {
-      }).catch(function(error) {
-      });
-
-    }).catch(function(error) {
-      debugger;
-      alert("Unable to create an account at this moment, please try again later.");
-
-    });
-  }
-
-  doLoginWithEmailAndPassword(){
-    //TODO: guardar en el app state
-    debugger;
-    const { email, password } = this.state;
-    firebase.auth().signInWithEmailAndPassword(email, password).then(function(auth){
-      debugger;
-      let user = auth.user;
-      let emailVerified;
-      
-      if (user != null) {
-        emailVerified = user.emailVerified;
-        let uid = user.uid; 
-        if(emailVerified){
-          //TODO: switch to home
+    constructor(props) {
+        super(props)
+        this.state = {
+            email: "",
+            password: "",
+            name: "",
+            error: false,
+            errorMessage: ""
         }
-        debugger;
-        const { dispatch } = this.props
-        dispatch(loginActions.login(user.uid));
-      }
-
-
-    }).catch(function(error) {
-      // Handle Errors here.
-      var errorCode = error.code;
-      var errorMessage = error.message;
-      // ...
-    });
-  }
-
-  handleChange(evt) {
-    debugger;
-    this.setState({ [evt.target.name]: evt.target.value });
-  }
-
-  render() {
-    let mensajeAlerta = <p />;
-    if (this.state.error) {
-      mensajeAlerta = <p> {this.state.errorMessage}</p>;
+        this.handleChange = this.handleChange.bind(this)
+        this.handleSubmit = this.handleSubmit.bind(this)
     }
 
-    return (
-      <div>
+    // Sign Up
+    handleSubmit(e) {
+        e.preventDefault()
+        const { email, password, name } = this.state
+        const { dispatch } = this.props
+        firebase
+            .auth()
+            .createUserWithEmailAndPassword(email, password)
+            .then(function(auth) {
+                const user = auth.user
+                dispatch(authActions.login(user.uid))
+                firebase
+                    .database()
+                    .ref("users/" + user.uid)
+                    .update({
+                        name: name,
+                        email: email
+                    })
+                user.sendEmailVerification()
+                    .then(function() {
+                        debugger
+                    })
+                    .catch(function(error) {
+                        console.log(error)
+                        debugger
+                    })
+            })
+            .catch(function(error) {
+                debugger
+                alert(
+                    "Unable to create an account at this moment, please try again later."
+                )
+            })
+    }
 
-        <Row style={{marginTop:'7%', marginLeft:'0', marginRight:'0', marginBottom:'2%'}} className=''>
-          <Col md={4}/>
-          <Col md={4} className=''>
-              <input
-                
-                type="text"
-                value={this.state.name}
-                placeholder="Name and Lastname"
-                onChange={this.handleChange}
-                name="name"
-              />
-          </Col>
-          <Col md={4}/>
-        </Row>
+    handleChange(evt) {
+        this.setState({ [evt.target.name]: evt.target.value })
+    }
 
-        <Row style={{marginLeft:'0', marginRight:'0', marginBottom:'2%'}} className=''>
-          <Col md={4}/>
-          <Col md={4} className=''>
-              <input
-                
-                type="email"
-                value={this.state.email}
-                placeholder="me@email.mx"
-                onChange={this.handleChange}
-                name="email"
-              />
-          </Col>
-          <Col md={4}/>
-        </Row>
+    render() {
+        let mensajeAlerta = <p />
+        if (this.state.error) {
+            mensajeAlerta = <p> {this.state.errorMessage}</p>
+        }
+        if (this.props.auth.uid) {
+            return <Redirect to="/" />
+        }
+        return (
+            <Container>
+                <Row>
+                    <Col md={{ offset: 3, span: 6 }}>
+                        <Form onSubmit={e => this.handleSubmit(e)}>
+                            <Form.Group controlId="formBasicName">
+                                <Form.Label>Name</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    value={this.state.name}
+                                    onChange={this.handleChange}
+                                    placeholder="Name and Lastname"
+                                    name="name"
+                                />
+                            </Form.Group>
+                            <Form.Group controlId="formBasicEmail">
+                                <Form.Label>Email address</Form.Label>
+                                <Form.Control
+                                    type="email"
+                                    placeholder="Enter email"
+                                    value={this.state.email}
+                                    onChange={this.handleChange}
+                                    name="email"
+                                />
+                                <Form.Text className="text-muted">
+                                    We'll never share your email with anyone
+                                    else.
+                                </Form.Text>
+                            </Form.Group>
 
-        <Row style={{marginLeft:'0', marginRight:'0'}} className=''>
-          <Col md={4}/>
-          <Col sm={4}>
-              <input
-                
-                type="password"
-                value={this.state.password}
-                placeholder="***********"
-                onChange={this.handleChange}
-                name="password"
-              />
-          </Col>
-          <Col md={4}/>
-        </Row>
-        
-        <Row style={{marginLeft:'0', marginRight:'0'}} className=''>
-          <Col md={4}/>
-          <Col md={2}>
-            <button  
-              onClick={this.doCreateUserWithEmailAndPassword}>
-                <p className="buttonText">
-                Sign Up
-                </p>
-            </button>
-          </Col>
-          <Col md={2}>
-            <button  
-              onClick={this.doLoginWithEmailAndPassword}>
-                <p className="buttonText">
-                Login
-                </p>
-            </button>
-          </Col>
-          <Col md={4}/>
-        </Row>
-
-        {mensajeAlerta}
-      </div>
-    );
-  }
+                            <Form.Group controlId="formBasicPassword">
+                                <Form.Label>Password</Form.Label>
+                                <Form.Control
+                                    type="password"
+                                    placeholder="***********"
+                                    value={this.state.password}
+                                    onChange={this.handleChange}
+                                    name="password"
+                                />
+                            </Form.Group>
+                            <Button variant="primary" type="submit">
+                                Submit
+                            </Button>
+                        </Form>
+                    </Col>
+                </Row>
+                <Row className="mt-3">
+                    <Col md={{ span: 6, offset: 3 }}>
+                        <span>Already have an account? </span>
+                        <NavLink to="/login">Login</NavLink>
+                    </Col>
+                </Row>
+                {mensajeAlerta}
+            </Container>
+        )
+    }
 }
 
-const mapStateToProps = ({ login }) => ({
-  login
+const mapStateToProps = ({ auth }) => ({
+    auth
 })
 export default connect(mapStateToProps)(SignUp)
