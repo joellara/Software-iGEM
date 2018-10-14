@@ -18,47 +18,28 @@ class SignUp extends Component {
         this.state = {
             email: "",
             password: "",
-            name: "",
             error: false,
             errorMessage: ""
         }
         this.handleChange = this.handleChange.bind(this)
         this.handleSubmit = this.handleSubmit.bind(this)
     }
-
-    // Sign Up
     handleSubmit(e) {
         e.preventDefault()
-        const { email, password, name } = this.state
+        const { email, password } = this.state
         const { dispatch } = this.props
         firebase
             .auth()
-            .createUserWithEmailAndPassword(email, password)
+            .signInWithEmailAndPassword(email, password)
             .then(function(auth) {
-                const user = auth.user
-                dispatch(authActions.login(user.uid))
-                firebase
-                    .database()
-                    .ref("users/" + user.uid)
-                    .update({
-                        name: name,
-                        email: email,
-                        projects: []
-                    })
-                user.sendEmailVerification()
-                    .then(function() {
-                        debugger
-                    })
-                    .catch(function(error) {
-                        console.log(error)
-                        debugger
-                    })
+                let user = auth.user
+                if (user != null) {
+                    let uid = user.uid
+                    dispatch(authActions.login(uid))
+                }
             })
             .catch(function(error) {
                 debugger
-                alert(
-                    "Unable to create an account at this moment, please try again later."
-                )
             })
     }
 
@@ -79,16 +60,6 @@ class SignUp extends Component {
                 <Row>
                     <Col md={{ offset: 3, span: 6 }}>
                         <Form onSubmit={e => this.handleSubmit(e)}>
-                            <Form.Group controlId="formBasicName">
-                                <Form.Label>Name</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    value={this.state.name}
-                                    onChange={this.handleChange}
-                                    placeholder="Name and Lastname"
-                                    name="name"
-                                />
-                            </Form.Group>
                             <Form.Group controlId="formBasicEmail">
                                 <Form.Label>Email address</Form.Label>
                                 <Form.Control
@@ -98,12 +69,7 @@ class SignUp extends Component {
                                     onChange={this.handleChange}
                                     name="email"
                                 />
-                                <Form.Text className="text-muted">
-                                    We'll never share your email with anyone
-                                    else.
-                                </Form.Text>
                             </Form.Group>
-
                             <Form.Group controlId="formBasicPassword">
                                 <Form.Label>Password</Form.Label>
                                 <Form.Control
@@ -122,8 +88,8 @@ class SignUp extends Component {
                 </Row>
                 <Row className="mt-3">
                     <Col md={{ span: 6, offset: 3 }}>
-                        <span>Already have an account? </span>
-                        <NavLink to="/login">Login</NavLink>
+                        <span>No account? </span>
+                        <NavLink to="/signup">Sign Up</NavLink>
                     </Col>
                 </Row>
                 {mensajeAlerta}

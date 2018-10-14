@@ -65,15 +65,17 @@ class Root extends Component {
                                 <Nav.Link as={NavLink} to="/cellcount">
                                     Cell Count
                                 </Nav.Link>
-                                <Nav.Link as={NavLink} to="/activitylog">
-                                    Activity
-                                </Nav.Link>
+                                {this.props.auth.UID && (
+                                    <Nav.Link as={NavLink} to="/activitylog">
+                                        Activity
+                                    </Nav.Link>
+                                )}
                                 <Nav.Link as={NavLink} to="/bbbuilder">
                                     Biobrick Builder
                                 </Nav.Link>
                             </Nav>
                             <Nav className="ml-auto">
-                                {!this.props.auth.uid && (
+                                {!this.props.auth.UID && (
                                     <React.Fragment>
                                         <Nav.Link as={NavLink} to="/login">
                                             Login
@@ -83,7 +85,7 @@ class Root extends Component {
                                         </Nav.Link>
                                     </React.Fragment>
                                 )}
-                                {this.props.auth.uid && (
+                                {this.props.auth.UID && (
                                     <Nav.Link
                                         eventKey="logOut"
                                         onSelect={this.onSelect}>

@@ -1,6 +1,7 @@
 import { combineReducers } from "redux"
 import { builder } from "./builder"
 import { auth } from "./auth"
-const rootReducer = combineReducers({ builder, auth })
+import { project } from "./project"
+const rootReducer = combineReducers({ builder, auth, project })
 
 export default rootReducer
