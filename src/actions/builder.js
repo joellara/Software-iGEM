@@ -38,7 +38,6 @@ const createBioBrick = (rfc, ...rest) => {
     }
 }
 const createRFC10 = (promoter, rbs, sequence, terminator) => {
-
     return (
         RFC10.prefix +
         promoter +

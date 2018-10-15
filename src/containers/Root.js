@@ -33,7 +33,7 @@ class Root extends Component {
         })
     }
     onSelect(eventKey) {
-        const { dispatch, userId } = this.props
+        const { dispatch } = this.props
         if (eventKey === "logOut") {
             firebase
                 .auth()

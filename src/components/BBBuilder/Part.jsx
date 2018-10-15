@@ -63,9 +63,9 @@ export default class Part extends Component {
                             <Card.Body id={`collapsing-text${text}`}>
                                 <blockquote className="blockquote mb-0">
                                     {data &&
-                                        Object.entries(data).map(val => {
+                                        Object.entries(data).map((val, idx) => {
                                             return (
-                                                <p>
+                                                <p key={idx}>
                                                     <strong>
                                                         {val[0]
                                                             .charAt(0)
@@ -79,7 +79,7 @@ export default class Part extends Component {
                                                 </p>
                                             )
                                         })}
-                                    <p style={{ "break-word": "break-all" }}>
+                                    <p style={{ breakWord: "break-all" }}>
                                         <strong>Sequence:</strong> {sequence}
                                     </p>
                                 </blockquote>

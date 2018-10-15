@@ -385,6 +385,7 @@ class Promoter extends Component {
                                         return (
                                             <Dropdown.Item
                                                 eventKey={index}
+                                                key={index}
                                                 onSelect={
                                                     this.handleSelectChassis
                                                 }>

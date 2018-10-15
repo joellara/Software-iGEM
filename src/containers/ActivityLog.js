@@ -60,7 +60,7 @@ class ActivityLog extends Component {
 
     getDataToPlot(timePeriod) {
         let dataToPlott = []
-        if (timePeriod == "all") {
+        if (timePeriod === "all") {
             for (var year in this.state.data) {
                 for (var month in this.state.data[year]) {
                     for (var day in this.state.data[year][month]) {
@@ -96,7 +96,7 @@ class ActivityLog extends Component {
                     }
                 }
             }
-        } else if (timePeriod == "year") {
+        } else if (timePeriod === "year") {
             let year = this.state.year
             for (var month in this.state.data[year]) {
                 for (var day in this.state.data[year][month]) {
@@ -126,7 +126,7 @@ class ActivityLog extends Component {
                     }
                 }
             }
-        } else if (timePeriod == "month") {
+        } else if (timePeriod === "month") {
             let year = this.state.year
             let month = this.state.month
 

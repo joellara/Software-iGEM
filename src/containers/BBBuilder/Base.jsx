@@ -1,6 +1,5 @@
 import React, { Component } from "react"
 import { connect } from "react-redux"
-import { Redirect } from "react-router-dom"
 //Components
 import RadioSelectionGroup from "../../components/RadioSelectionGroup"
 //Redux
@@ -74,7 +73,7 @@ export class Base extends Component {
                                     <Card.Title>Chassis</Card.Title>
                                     <Card.Text as="div">
                                         <RadioSelectionGroup
-                                            listData={CHASSIS}
+                                            listData={CHASSIS.slice(1)}
                                             stateData={chassis}
                                             _function={this.handleClickChassis}
                                             _name="Chassis"

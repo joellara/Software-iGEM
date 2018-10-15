@@ -145,7 +145,7 @@ class SelectProject extends Component {
                                 </Button>
                             </React.Fragment>
                         )}
-                        {projectList.length == 0 && <h4>No projects found</h4>}
+                        {projectList.length === 0 && <h4>No projects found</h4>}
                     </Col>
                 </Row>
             </Container>

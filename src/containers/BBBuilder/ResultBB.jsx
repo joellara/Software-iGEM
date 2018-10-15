@@ -141,7 +141,7 @@ class ResultBB extends Component {
                     text={"RBS"}
                 />
                 <Part
-                    sequence={this.state.sequence}
+                    sequence={sequence}
                     className="mb-2"
                     text={"Coding Sequence"}
                 />
@@ -150,6 +150,11 @@ class ResultBB extends Component {
                     sequence={this.state.terminator}
                     className="mb-2"
                     text={"Terminator"}
+                />
+                <Part
+                    sequence={this.state.biobrick}
+                    className="mb-2"
+                    text={`Full Biobrick with ${rfc} prefixes, scars and sufixes`}
                 />
             </Container>
         )
