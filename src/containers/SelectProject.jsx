@@ -28,7 +28,7 @@ class SelectProject extends Component {
     getProjects() {
         const { UID } = this.props.auth
         usersRef.child(`${UID}/projects`).on("value", snapshot => {
-            debugger
+            
             const payload = snapshot.val()
             if (payload) {
                 this.setState({

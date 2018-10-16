@@ -47,15 +47,15 @@ class SignUp extends Component {
                     })
                 user.sendEmailVerification()
                     .then(function() {
-                        debugger
+                        
                     })
                     .catch(function(error) {
                         console.log(error)
-                        debugger
+                        
                     })
             })
             .catch(function(error) {
-                debugger
+                
                 alert(
                     "Unable to create an account at this moment, please try again later."
                 )

@@ -12,7 +12,7 @@ import Button from "react-bootstrap/lib/Button"
 import { NavLink } from "react-router-dom"
 import { Redirect } from "react-router"
 
-class SignUp extends Component {
+class Signup extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -39,7 +39,7 @@ class SignUp extends Component {
                 }
             })
             .catch(function(error) {
-                debugger
+                
             })
     }
 
@@ -101,4 +101,4 @@ class SignUp extends Component {
 const mapStateToProps = ({ auth }) => ({
     auth
 })
-export default connect(mapStateToProps)(SignUp)
+export default connect(mapStateToProps)(Signup)
