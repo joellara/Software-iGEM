@@ -24,3 +24,7 @@ npm or yarn install
 ~~~~
 npm start or yarn start
 ~~~~
+
+## About
+Proudly brought to you by iGEM-Tec-CEM  
+Licensed under MIT License.
