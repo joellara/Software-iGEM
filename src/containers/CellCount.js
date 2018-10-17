@@ -61,11 +61,11 @@ class Count extends Component {
           alert("Image sent.");
           _this.setState({file:null, cells:res.cells});
         }else{
-          alert("Error, please try later.");
+          alert("Error, this functionality is unavailable for public use. Run on local host.");
         }
       });
     }else{
-      //fetch("http://igem-2018-tec.herokuapp.com/large", {
+      //fetch("http://igem-2018-tec.herokuapp.com/short", {
         fetch("http://localhost:5000/short",{
           method: "post",
           body: formData
@@ -75,7 +75,7 @@ class Count extends Component {
           alert("Image sent.");
           _this.setState({file:null, cells:res.cells});
         }else{
-          alert("Error, please try later.");
+          alert("Error, this functionality is unavailable for public use. Run on local host.");
         }
       });
     }
